@@ -1,0 +1,187 @@
+@import "tailwindcss";
+
+@theme {
+  /* Primary brand — orange is the Traka signature */
+  --color-traka-orange: #FF8300;
+  --color-traka-orange-light: #FFA040;
+  --color-traka-orange-muted: #FF830020;
+  --color-traka-orange-glow: #FF830040;
+
+  /* Blue — secondary accent, used sparingly */
+  --color-traka-blue: #0071E3;
+  --color-traka-blue-light: #3d9bff;
+  --color-traka-blue-muted: #0071E320;
+
+  /* Surface — true neutral dark palette, no blue tint */
+  --color-void: #09090B;
+  --color-panel: #111113;
+  --color-panel-raised: #19191C;
+  --color-panel-hover: #1F1F23;
+  --color-border-subtle: #232328;
+  --color-border: #2E2E35;
+  --color-border-active: #48485A;
+  --color-text-primary: #ECECEF;
+  --color-text-secondary: #8B8B97;
+  --color-text-tertiary: #56565F;
+  --color-text-ghost: #333338;
+
+  /* Font families */
+  --font-display: "Syne", sans-serif;
+  --font-body: "Outfit", sans-serif;
+  --font-mono: "IBM Plex Mono", monospace;
+}
+
+/* ---- Base ---- */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #2E2E35 transparent;
+}
+
+html {
+  background-color: var(--color-void);
+}
+
+body {
+  background-color: var(--color-void);
+  color: var(--color-text-primary);
+  font-family: var(--font-body);
+}
+
+/* ---- Atmospheric backgrounds ---- */
+
+/* Dot matrix pattern — neutral gray */
+.bg-dots {
+  background-image: radial-gradient(circle, #232328 0.75px, transparent 0.75px);
+  background-size: 24px 24px;
+}
+
+/* Subtle top-down ambient light — warm neutral with faint orange */
+.bg-ambient {
+  background:
+    radial-gradient(ellipse 50% 35% at 50% -5%, rgba(255, 131, 0, 0.03) 0%, transparent 100%),
+    radial-gradient(ellipse 80% 50% at 50% 0%, rgba(255, 255, 255, 0.01) 0%, transparent 100%);
+}
+
+/* Noise grain overlay */
+.bg-grain::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  opacity: 0.02;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ---- Panel system ---- */
+.panel {
+  background: var(--color-panel);
+  border: 1px solid var(--color-border-subtle);
+}
+
+.panel-raised {
+  background: var(--color-panel-raised);
+  border: 1px solid var(--color-border-subtle);
+}
+
+.panel-interactive {
+  background: var(--color-panel);
+  border: 1px solid var(--color-border-subtle);
+  transition: all 0.2s ease;
+}
+
+.panel-interactive:hover {
+  background: var(--color-panel-hover);
+  border-color: var(--color-border);
+}
+
+/* ---- Typography utilities ---- */
+.font-display {
+  font-family: var(--font-display);
+}
+
+.font-mono {
+  font-family: var(--font-mono);
+}
+
+.text-display-lg {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.text-display-sm {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+}
+
+.text-label {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-tertiary);
+}
+
+/* ---- Interactive elements ---- */
+.btn-primary {
+  background: var(--color-traka-orange);
+  color: #09090B;
+  font-family: var(--font-body);
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+  background: var(--color-traka-orange-light);
+  box-shadow: 0 0 20px var(--color-traka-orange-muted);
+}
+
+.btn-secondary {
+  background: var(--color-traka-blue);
+  color: white;
+  font-family: var(--font-body);
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.btn-secondary:hover {
+  background: var(--color-traka-blue-light);
+  box-shadow: 0 0 20px var(--color-traka-blue-muted);
+}
+
+.input-field {
+  background: var(--color-panel);
+  border: 1px solid var(--color-border-subtle);
+  color: var(--color-text-primary);
+  font-family: var(--font-body);
+  transition: all 0.2s ease;
+}
+
+.input-field:focus {
+  outline: none;
+  border-color: var(--color-traka-orange);
+  box-shadow: 0 0 0 3px var(--color-traka-orange-muted);
+}
+
+.input-field::placeholder {
+  color: var(--color-text-ghost);
+}
+
+/* ---- Keyframes ---- */
+@keyframes pulse-subtle {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.4s ease-out forwards;
+}
