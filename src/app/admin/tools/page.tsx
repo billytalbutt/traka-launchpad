@@ -11,8 +11,10 @@ import {
   Save,
   ExternalLink,
   Monitor,
+  Shield,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { ALL_ROLES, ROLE_LABELS, type UserRole } from "@/types";
 
 interface Tool {
   id: string;
@@ -26,6 +28,7 @@ interface Tool {
   isActive: boolean;
   sortOrder: number;
   color: string | null;
+  allowedRoles: string | null;
 }
 
 const emptyTool: Omit<Tool, "id"> = {
@@ -39,6 +42,7 @@ const emptyTool: Omit<Tool, "id"> = {
   isActive: true,
   sortOrder: 0,
   color: "#0078D4",
+  allowedRoles: null,
 };
 
 export default function AdminToolsPage() {
@@ -168,10 +172,16 @@ export default function AdminToolsPage() {
 
                 <div className="flex items-center gap-3 text-sm text-text-tertiary">
                   <span className="hidden sm:inline">{tool.category}</span>
-                  <span className="hidden sm:inline">v{tool.version}</span>
+                  {tool.version && <span className="hidden sm:inline">v{tool.version}</span>}
                   <span className="text-xs px-2 py-0.5 rounded-full bg-panel border border-border-subtle">
                     {tool.launchType}
                   </span>
+                  {tool.allowedRoles && (
+                    <span className="text-xs px-2 py-0.5 rounded-full bg-traka-blue/[0.06] text-traka-blue border border-traka-blue/20 flex items-center gap-1">
+                      <Shield className="w-3 h-3" />
+                      <span className="hidden lg:inline">Restricted</span>
+                    </span>
+                  )}
                 </div>
 
                 <div className="flex items-center gap-1">
@@ -369,6 +379,68 @@ export default function AdminToolsPage() {
                       }
                       className="input-field w-full"
                     />
+                  </div>
+                </div>
+
+                {/* Role Access */}
+                <div>
+                  <div className="flex items-center gap-2 mb-2">
+                    <Shield className="w-3.5 h-3.5 text-traka-blue" />
+                    <label className="text-label text-text-secondary">
+                      Role Access
+                    </label>
+                  </div>
+                  <p className="text-[11px] text-text-ghost mb-3">
+                    Select which roles can access this tool. Leave all unchecked for universal access.
+                  </p>
+                  <div className="grid grid-cols-2 gap-2">
+                    {ALL_ROLES.filter((r) => r !== "ADMIN").map((role) => {
+                      const currentRoles = editing.allowedRoles
+                        ? editing.allowedRoles.split(",").map((r) => r.trim())
+                        : [];
+                      const isChecked = currentRoles.includes(role);
+
+                      return (
+                        <button
+                          key={role}
+                          type="button"
+                          onClick={() => {
+                            let newRoles: string[];
+                            if (isChecked) {
+                              newRoles = currentRoles.filter((r) => r !== role);
+                            } else {
+                              newRoles = [...currentRoles, role];
+                            }
+                            setEditing({
+                              ...editing,
+                              allowedRoles: newRoles.length > 0 ? newRoles.join(",") : null,
+                            });
+                          }}
+                          className={cn(
+                            "flex items-center gap-2 px-3 py-2 rounded-lg border text-xs transition-all text-left",
+                            isChecked
+                              ? "border-traka-blue/30 bg-traka-blue/[0.06] text-traka-blue"
+                              : "border-border-subtle bg-panel text-text-secondary hover:border-border"
+                          )}
+                        >
+                          <div
+                            className={cn(
+                              "w-3.5 h-3.5 rounded border flex items-center justify-center flex-shrink-0 transition-colors",
+                              isChecked
+                                ? "bg-traka-blue border-traka-blue"
+                                : "border-border bg-transparent"
+                            )}
+                          >
+                            {isChecked && (
+                              <svg className="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                              </svg>
+                            )}
+                          </div>
+                          {ROLE_LABELS[role as UserRole]}
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
 

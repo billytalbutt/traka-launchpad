@@ -14,7 +14,7 @@ model User {
   emailVerified  DateTime?
   hashedPassword String?
   image          String?
-  role           String    @default("USER") // USER | ADMIN
+  role           String    @default("APP_SUPPORT") // ADMIN | APP_SUPPORT | EU_TECH_SUPPORT | UK_TECH_SUPPORT
   isActive       Boolean   @default(true)
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
@@ -73,9 +73,10 @@ model Tool {
   version     String?
   isActive    Boolean  @default(true)
   sortOrder   Int      @default(0)
-  color       String?  // Optional accent color for the card
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  color        String?  // Optional accent color for the card
+  allowedRoles String?  // Comma-separated roles that can access this tool (empty = all roles)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   favorites    Favorite[]
   toolLaunches ToolLaunch[]

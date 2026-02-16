@@ -8,7 +8,7 @@ async function main() {
   const adminPassword = await hash("admin123", 12);
   const admin = await prisma.user.upsert({
     where: { email: "admin@traka.com" },
-    update: {},
+    update: { role: "ADMIN" },
     create: {
       email: "admin@traka.com",
       name: "Admin",
@@ -20,7 +20,18 @@ async function main() {
   console.log("Created admin user:", admin.email);
 
   // Seed tools
-  const tools = [
+  const tools: Array<{
+    name: string;
+    description: string;
+    iconName: string;
+    launchUrl?: string;
+    launchType: string;
+    category: string;
+    version: string | null;
+    sortOrder: number;
+    color: string;
+    allowedRoles?: string;
+  }> = [
     {
       name: "Traka Log Analyzer",
       description:
@@ -102,15 +113,64 @@ async function main() {
       sortOrder: 7,
       color: "#0078D4",
     },
+    {
+      name: "SMTP Tool",
+      description:
+        "Configure and test SMTP email relay settings for Traka notifications. Send test emails, verify connectivity, and diagnose delivery issues.",
+      iconName: "mail",
+      launchType: "DESKTOP",
+      category: "Diagnostics",
+      version: "1.0.0",
+      sortOrder: 8,
+      color: "#ea580c",
+    },
+    {
+      name: "Jira",
+      description:
+        "Atlassian Jira project management and issue tracking. Manage support tickets, track bugs, and coordinate development sprints.",
+      iconName: "ticket",
+      launchUrl: "https://traka.atlassian.net",
+      launchType: "WEB",
+      category: "Project Management",
+      version: null,
+      sortOrder: 9,
+      color: "#2563eb",
+      allowedRoles: "ADMIN,APP_SUPPORT,EU_TECH_SUPPORT",
+    },
+    {
+      name: "Confluence",
+      description:
+        "Atlassian Confluence knowledge base and documentation wiki. Access internal documentation, guides, and team collaboration spaces.",
+      iconName: "book-open",
+      launchUrl: "https://traka.atlassian.net/wiki",
+      launchType: "WEB",
+      category: "Documentation",
+      version: null,
+      sortOrder: 10,
+      color: "#1d4ed8",
+      allowedRoles: "ADMIN,APP_SUPPORT,EU_TECH_SUPPORT",
+    },
   ];
 
   for (const tool of tools) {
+    const data = {
+      name: tool.name,
+      description: tool.description,
+      iconName: tool.iconName,
+      launchUrl: tool.launchUrl ?? null,
+      launchType: tool.launchType,
+      category: tool.category,
+      version: tool.version,
+      sortOrder: tool.sortOrder,
+      color: tool.color,
+      allowedRoles: tool.allowedRoles ?? null,
+    };
     await prisma.tool.upsert({
       where: { id: tool.name.toLowerCase().replace(/\s+/g, "-") },
-      update: tool,
+      update: data,
       create: {
         id: tool.name.toLowerCase().replace(/\s+/g, "-"),
-        ...tool,
+        ...data,
       },
     });
   }

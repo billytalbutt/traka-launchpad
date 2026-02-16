@@ -27,9 +27,9 @@ export async function POST(request: Request) {
 
     const hashedPassword = await hash(password, 12);
 
-    // First user becomes admin
+    // First user becomes admin, others default to APP_SUPPORT
     const userCount = await prisma.user.count();
-    const role = userCount === 0 ? "ADMIN" : "USER";
+    const role = userCount === 0 ? "ADMIN" : "APP_SUPPORT";
 
     const user = await prisma.user.create({
       data: {

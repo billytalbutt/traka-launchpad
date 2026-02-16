@@ -19,6 +19,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { cn, getInitials } from "@/lib/utils";
+import { ROLE_LABELS, type UserRole } from "@/types";
 
 const mainNav = [
   { href: "/dashboard", icon: LayoutGrid, label: "Launchpad" },
@@ -188,7 +189,7 @@ export function Sidebar() {
                   {session?.user?.name}
                 </p>
                 <p className="text-[10px] text-text-ghost font-mono truncate">
-                  {session?.user?.role?.toLowerCase()}
+                  {ROLE_LABELS[session?.user?.role as UserRole] || session?.user?.role?.toLowerCase()}
                 </p>
               </motion.div>
             )}

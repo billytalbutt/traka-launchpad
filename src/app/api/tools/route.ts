@@ -9,6 +9,9 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  const userRole = session.user.role;
+  const isAdmin = userRole === "ADMIN";
+
   const tools = await prisma.tool.findMany({
     where: { isActive: true },
     include: {
@@ -22,7 +25,19 @@ export async function GET() {
     orderBy: { sortOrder: "asc" },
   });
 
-  const toolsWithFavorites = tools.map((tool) => ({
+  // Filter tools based on role permissions
+  // ADMIN can always see everything
+  // If allowedRoles is null/empty, the tool is visible to all roles
+  // Otherwise, only roles listed in allowedRoles can see the tool
+  const visibleTools = isAdmin
+    ? tools
+    : tools.filter((tool) => {
+        if (!tool.allowedRoles) return true;
+        const allowed = tool.allowedRoles.split(",").map((r) => r.trim());
+        return allowed.includes(userRole);
+      });
+
+  const toolsWithFavorites = visibleTools.map((tool) => ({
     ...tool,
     isFavorite: tool.favorites.length > 0,
     launchCount: tool._count.toolLaunches,
@@ -43,6 +58,7 @@ const createToolSchema = z.object({
   version: z.string().nullable().optional(),
   color: z.string().nullable().optional(),
   sortOrder: z.number().default(0),
+  allowedRoles: z.string().nullable().optional(),
 });
 
 export async function POST(request: Request) {

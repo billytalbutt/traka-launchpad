@@ -15,6 +15,9 @@ import {
   LayoutDashboard,
   Wrench,
   ArrowUpRight,
+  Mail,
+  Ticket,
+  BookOpen,
   type LucideProps,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -29,6 +32,9 @@ const iconMap: Record<string, React.ComponentType<LucideProps>> = {
   plug: Plug,
   "layout-dashboard": LayoutDashboard,
   wrench: Wrench,
+  mail: Mail,
+  ticket: Ticket,
+  "book-open": BookOpen,
 };
 
 interface ToolCardProps {

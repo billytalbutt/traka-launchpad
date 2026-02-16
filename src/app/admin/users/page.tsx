@@ -2,8 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Users, Shield, ShieldOff, UserCheck, UserX } from "lucide-react";
+import { Users, UserCheck, UserX, ChevronDown } from "lucide-react";
 import { cn, getInitials, formatDate } from "@/lib/utils";
+import { ALL_ROLES, ROLE_LABELS, type UserRole } from "@/types";
 
 interface UserData {
   id: string;
@@ -67,22 +68,34 @@ export default function AdminUsersPage() {
       </motion.div>
 
       {/* Stats row */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+      <div className="grid grid-cols-2 sm:grid-cols-5 gap-4 mb-8">
         <div className="panel rounded-lg p-4">
           <p className="text-2xl font-bold text-text-primary">{users.length}</p>
           <p className="text-label text-text-secondary mt-0.5">Total Users</p>
         </div>
         <div className="panel rounded-lg p-4">
-          <p className="text-2xl font-bold text-text-primary">
+          <p className="text-2xl font-bold text-traka-orange">
             {users.filter((u) => u.role === "ADMIN").length}
           </p>
-          <p className="text-label text-text-secondary mt-0.5">Administrators</p>
+          <p className="text-label text-text-secondary mt-0.5">Admins</p>
+        </div>
+        <div className="panel rounded-lg p-4">
+          <p className="text-2xl font-bold text-emerald-400">
+            {users.filter((u) => u.role === "APP_SUPPORT").length}
+          </p>
+          <p className="text-label text-text-secondary mt-0.5">App Support</p>
+        </div>
+        <div className="panel rounded-lg p-4">
+          <p className="text-2xl font-bold text-traka-blue">
+            {users.filter((u) => u.role === "EU_TECH_SUPPORT" || u.role === "UK_TECH_SUPPORT").length}
+          </p>
+          <p className="text-label text-text-secondary mt-0.5">Tech Support</p>
         </div>
         <div className="panel rounded-lg p-4">
           <p className="text-2xl font-bold text-text-primary">
             {users.filter((u) => u.isActive).length}
           </p>
-          <p className="text-label text-text-secondary mt-0.5">Active Users</p>
+          <p className="text-label text-text-secondary mt-0.5">Active</p>
         </div>
       </div>
 
@@ -152,10 +165,14 @@ export default function AdminUsersPage() {
                             "text-xs px-2 py-0.5 rounded-full border",
                             user.role === "ADMIN"
                               ? "bg-traka-orange/[0.06] text-traka-orange border-border-subtle"
-                              : "bg-panel-hover text-text-secondary border-border-subtle"
+                              : user.role === "APP_SUPPORT"
+                              ? "bg-emerald-500/[0.06] text-emerald-400 border-border-subtle"
+                              : user.role === "EU_TECH_SUPPORT"
+                              ? "bg-traka-blue/[0.06] text-traka-blue border-border-subtle"
+                              : "bg-purple-500/[0.06] text-purple-400 border-border-subtle"
                           )}
                         >
-                          {user.role}
+                          {ROLE_LABELS[user.role as UserRole] || user.role}
                         </span>
                       </td>
                       <td className="py-3 px-4 text-text-secondary hidden sm:table-cell">
@@ -177,27 +194,23 @@ export default function AdminUsersPage() {
                         </span>
                       </td>
                       <td className="py-3 px-4">
-                        <div className="flex items-center justify-end gap-1">
-                          <button
-                            onClick={() =>
-                              handleUpdate(user.id, {
-                                role:
-                                  user.role === "ADMIN" ? "USER" : "ADMIN",
-                              })
-                            }
-                            className="p-1.5 rounded-lg text-text-secondary hover:text-traka-blue hover:bg-traka-blue/[0.06] transition-colors"
-                            title={
-                              user.role === "ADMIN"
-                                ? "Remove admin"
-                                : "Make admin"
-                            }
-                          >
-                            {user.role === "ADMIN" ? (
-                              <ShieldOff className="w-4 h-4" />
-                            ) : (
-                              <Shield className="w-4 h-4" />
-                            )}
-                          </button>
+                        <div className="flex items-center justify-end gap-2">
+                          <div className="relative">
+                            <select
+                              value={user.role}
+                              onChange={(e) =>
+                                handleUpdate(user.id, { role: e.target.value })
+                              }
+                              className="appearance-none text-xs px-2.5 py-1.5 pr-7 rounded-lg bg-panel border border-border-subtle text-text-secondary hover:border-border transition-colors cursor-pointer focus:outline-none focus:border-traka-blue"
+                            >
+                              {ALL_ROLES.map((role) => (
+                                <option key={role} value={role}>
+                                  {ROLE_LABELS[role]}
+                                </option>
+                              ))}
+                            </select>
+                            <ChevronDown className="w-3 h-3 absolute right-2 top-1/2 -translate-y-1/2 text-text-ghost pointer-events-none" />
+                          </div>
                           <button
                             onClick={() =>
                               handleUpdate(user.id, {

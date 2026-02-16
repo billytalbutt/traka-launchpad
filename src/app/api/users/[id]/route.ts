@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
+const VALID_ROLES = ["ADMIN", "APP_SUPPORT", "EU_TECH_SUPPORT", "UK_TECH_SUPPORT"];
+
 export async function PUT(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
@@ -18,6 +20,14 @@ export async function PUT(
   if (id === session.user.id && body.role && body.role !== "ADMIN") {
     return NextResponse.json(
       { error: "Cannot change your own role" },
+      { status: 400 }
+    );
+  }
+
+  // Validate role if provided
+  if (body.role && !VALID_ROLES.includes(body.role)) {
+    return NextResponse.json(
+      { error: "Invalid role" },
       { status: 400 }
     );
   }
