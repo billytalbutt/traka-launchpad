@@ -7,6 +7,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { ArrowRight } from "lucide-react";
+import ResponsiveHeroBanner from "@/components/ui/responsive-hero-banner";
 
 export default function LoginPage() {
   return (
@@ -51,99 +52,17 @@ function LoginForm() {
   };
 
   return (
-    <div className="min-h-screen flex bg-void bg-dots bg-ambient">
-      {/* Left panel — brand / atmosphere */}
-      <div className="hidden lg:flex lg:w-[45%] xl:w-[50%] flex-col justify-between p-12 relative overflow-hidden">
-        {/* Decorative elements */}
-        <div className="absolute top-0 right-0 w-px h-full bg-gradient-to-b from-transparent via-border-subtle to-transparent" />
-        <div className="absolute bottom-[20%] left-[10%] w-48 h-48 rounded-full bg-traka-blue/5 blur-3xl" />
-        <div className="absolute top-[30%] right-[15%] w-32 h-32 rounded-full bg-traka-orange/3 blur-3xl" />
-
-        {/* Top — Logo */}
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6 }}
-          className="flex items-center gap-3"
-        >
-          <Image
-            src="/traka-logo-dark.svg"
-            alt="Traka - ASSA ABLOY"
-            width={120}
-            height={56}
-            className="h-10 w-auto"
-          />
-        </motion.div>
-
-        {/* Center — Hero text */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-        >
-          <h1 className="text-display-lg text-5xl xl:text-6xl text-text-primary mb-6">
-            Your tools.
-            <br />
-            <span className="text-traka-orange">One place.</span>
-          </h1>
-          <p className="text-text-secondary text-lg leading-relaxed max-w-md">
-            Access every Traka product from a single command center.
-            Launch, manage, and monitor — all in one click.
-          </p>
-
-          {/* Decorative status indicators */}
-          <div className="flex items-center gap-6 mt-12">
-            {["Log Analyzer", "Data Tool", "CSV Import", "Docs AI"].map(
-              (tool, i) => (
-                <motion.div
-                  key={tool}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.6 + i * 0.1 }}
-                  className="flex items-center gap-2"
-                >
-                  <div
-                    className="w-1.5 h-1.5 rounded-full"
-                    style={{
-                      backgroundColor:
-                        i === 0
-                          ? "#0071E3"
-                          : i === 1
-                          ? "#8b5cf6"
-                          : i === 2
-                          ? "#10b981"
-                          : "#E8730E",
-                      boxShadow: `0 0 6px ${
-                        i === 0
-                          ? "#0071E340"
-                          : i === 1
-                          ? "#8b5cf640"
-                          : i === 2
-                          ? "#10b98140"
-                          : "#E8730E40"
-                      }`,
-                    }}
-                  />
-                  <span className="text-label !text-[10px]">{tool}</span>
-                </motion.div>
-              )
-            )}
-          </div>
-        </motion.div>
-
-        {/* Bottom — copyright */}
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1 }}
-          className="text-text-ghost text-xs font-mono"
-        >
-          &copy; {new Date().getFullYear()} ASSA ABLOY
-        </motion.p>
+    <div className="min-h-screen flex bg-void">
+      {/* Left panel — Hero banner */}
+      <div className="hidden lg:block lg:w-[55%] xl:w-[58%] relative overflow-hidden">
+        <ResponsiveHeroBanner />
       </div>
 
       {/* Right panel — form */}
-      <div className="flex-1 flex items-center justify-center p-6 sm:p-12">
+      <div className="flex-1 flex items-center justify-center p-6 sm:p-12 bg-void bg-dots bg-ambient relative">
+        {/* Subtle left border glow */}
+        <div className="absolute left-0 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-traka-orange/20 to-transparent hidden lg:block" />
+
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -151,14 +70,17 @@ function LoginForm() {
           className="w-full max-w-sm"
         >
           {/* Mobile logo */}
-          <div className="lg:hidden mb-10">
+          <div className="lg:hidden mb-10 flex items-center gap-3">
             <Image
-              src="/traka-logo-dark.svg"
-              alt="Traka - ASSA ABLOY"
-              width={120}
-              height={56}
-              className="h-10 w-auto"
+              src="/traka-mark.svg"
+              alt="Traka"
+              width={80}
+              height={20}
+              className="h-5 w-auto"
             />
+            <span className="font-display font-semibold text-[11px] text-text-tertiary uppercase tracking-[0.1em]">
+              Launchpad
+            </span>
           </div>
 
           <h2 className="text-display-sm text-2xl text-text-primary mb-1">
@@ -260,6 +182,11 @@ function LoginForm() {
             >
               Create one
             </Link>
+          </p>
+
+          {/* Copyright */}
+          <p className="text-text-ghost text-xs font-mono mt-12 text-center">
+            &copy; {new Date().getFullYear()} ASSA ABLOY
           </p>
         </motion.div>
       </div>

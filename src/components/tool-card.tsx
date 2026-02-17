@@ -116,11 +116,11 @@ export function ToolCard({
               >
                 {isTrakaWEB ? (
                   <Image
-                    src="/traka-mark.svg"
+                    src="/traka-logo-dark.svg"
                     alt="TrakaWEB"
-                    width={20}
-                    height={20}
-                    className="w-5 h-auto"
+                    width={28}
+                    height={28}
+                    className="w-7 h-auto"
                   />
                 ) : (
                   <Icon
