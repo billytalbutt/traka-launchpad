@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { motion } from "framer-motion";
-import { Mail, Shield, Activity, Star, Rocket, Globe, Check } from "lucide-react";
+import { Mail, Shield, Activity, Star, Rocket, Globe, Check, Monitor, Eye, EyeOff } from "lucide-react";
 import { getInitials } from "@/lib/utils";
 import type { ToolWithFavorite } from "@/types";
 import { ROLE_LABELS, type UserRole } from "@/types";
@@ -15,6 +15,13 @@ export default function ProfilePage() {
   const [trakaWebUrl, setTrakaWebUrl] = useState("");
   const [urlSaved, setUrlSaved] = useState(false);
   const [urlSaving, setUrlSaving] = useState(false);
+  const [rdpHost, setRdpHost] = useState("");
+  const [rdpUsername, setRdpUsername] = useState("");
+  const [rdpPassword, setRdpPassword] = useState("");
+  const [rdpPasswordSet, setRdpPasswordSet] = useState(false);
+  const [rdpShowPassword, setRdpShowPassword] = useState(false);
+  const [rdpSaved, setRdpSaved] = useState(false);
+  const [rdpSaving, setRdpSaving] = useState(false);
 
   useEffect(() => {
     fetch("/api/tools")
@@ -30,11 +37,41 @@ export default function ProfilePage() {
 
     fetch("/api/profile")
       .then((r) => r.json())
-      .then((data: { trakaWebUrl: string }) => {
+      .then((data: { trakaWebUrl: string; rdpHost: string; rdpUsername: string; rdpPasswordSet: boolean }) => {
         setTrakaWebUrl(data.trakaWebUrl);
+        setRdpHost(data.rdpHost);
+        setRdpUsername(data.rdpUsername);
+        setRdpPasswordSet(data.rdpPasswordSet);
       })
       .catch(() => {});
   }, []);
+
+  const saveRdpConfig = async () => {
+    setRdpSaving(true);
+    try {
+      const payload: Record<string, string> = {
+        rdpHost,
+        rdpUsername,
+      };
+      if (rdpPassword) {
+        payload.rdpPassword = rdpPassword;
+      }
+      const res = await fetch("/api/profile", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+      setRdpPasswordSet(data.rdpPasswordSet);
+      setRdpPassword("");
+      setRdpSaved(true);
+      setTimeout(() => setRdpSaved(false), 2000);
+    } catch {
+      // silently fail
+    } finally {
+      setRdpSaving(false);
+    }
+  };
 
   const saveTrakaWebUrl = async () => {
     setUrlSaving(true);
@@ -173,6 +210,78 @@ export default function ProfilePage() {
               "Save"
             )}
           </button>
+        </div>
+      </motion.div>
+
+      {/* RDP / My VM configuration */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.28 }}
+        className="panel rounded-lg p-6 mb-4"
+      >
+        <div className="flex items-center gap-2 mb-4">
+          <Monitor className="w-3.5 h-3.5 text-purple-400" />
+          <span className="text-label text-[10px]">My VM — Remote Desktop</span>
+        </div>
+        <p className="text-text-secondary text-xs mb-3">
+          Configure your personal VM for one-click Remote Desktop access. All
+          three fields are required.
+          {rdpPasswordSet && (
+            <span className="text-emerald-400 ml-1">(Password is saved)</span>
+          )}
+        </p>
+        <div className="space-y-2.5">
+          <input
+            type="text"
+            value={rdpHost}
+            onChange={(e) => setRdpHost(e.target.value)}
+            placeholder="VM hostname or IP (e.g. my-vm.corp.local)"
+            className="w-full px-3 py-2 rounded-lg input-field text-sm font-mono"
+          />
+          <input
+            type="text"
+            value={rdpUsername}
+            onChange={(e) => setRdpUsername(e.target.value)}
+            placeholder="Username (e.g. DOMAIN\username)"
+            className="w-full px-3 py-2 rounded-lg input-field text-sm font-mono"
+          />
+          <div className="relative">
+            <input
+              type={rdpShowPassword ? "text" : "password"}
+              value={rdpPassword}
+              onChange={(e) => setRdpPassword(e.target.value)}
+              placeholder={rdpPasswordSet ? "••••••••  (leave blank to keep current)" : "Password"}
+              className="w-full px-3 py-2 pr-10 rounded-lg input-field text-sm font-mono"
+            />
+            <button
+              type="button"
+              onClick={() => setRdpShowPassword(!rdpShowPassword)}
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-text-ghost hover:text-text-secondary transition-colors"
+            >
+              {rdpShowPassword ? (
+                <EyeOff className="w-4 h-4" />
+              ) : (
+                <Eye className="w-4 h-4" />
+              )}
+            </button>
+          </div>
+          <div className="flex justify-end pt-1">
+            <button
+              onClick={saveRdpConfig}
+              disabled={rdpSaving || !rdpHost || !rdpUsername}
+              className="px-4 py-2 rounded-lg btn-primary text-sm flex items-center gap-1.5 disabled:opacity-50"
+            >
+              {rdpSaved ? (
+                <>
+                  <Check className="w-3.5 h-3.5" />
+                  Saved
+                </>
+              ) : (
+                "Save"
+              )}
+            </button>
+          </div>
         </div>
       </motion.div>
 

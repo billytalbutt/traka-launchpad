@@ -18,6 +18,9 @@ export async function GET() {
       isActive: true,
       isApproved: true,
       createdAt: true,
+      rdpHost: true,
+      rdpUsername: true,
+      rdpPassword: true,
       _count: {
         select: { toolLaunches: true },
       },
@@ -29,6 +32,8 @@ export async function GET() {
     users.map((u) => ({
       ...u,
       launchCount: u._count.toolLaunches,
+      rdpPasswordSet: !!u.rdpPassword,
+      rdpPassword: undefined,
       _count: undefined,
     }))
   );

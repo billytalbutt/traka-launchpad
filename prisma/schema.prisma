@@ -16,6 +16,9 @@ model User {
   image          String?
   role           String    @default("APP_SUPPORT") // ADMIN | APP_SUPPORT | EU_TECH_SUPPORT | UK_TECH_SUPPORT
   trakaWebUrl    String?   // User-specific TrakaWEB URL (e.g. http://servername/trakaweb)
+  rdpHost        String?   // User-specific RDP hostname or IP
+  rdpUsername    String?   // User-specific RDP username
+  rdpPassword    String?   // User-specific RDP password (stored encrypted)
   isActive       Boolean   @default(true)
   isApproved     Boolean   @default(false) // New users require admin approval before accessing the app
   createdAt      DateTime  @default(now())

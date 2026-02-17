@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { encrypt } from "@/lib/crypto";
 
 const VALID_ROLES = ["ADMIN", "APP_SUPPORT", "EU_TECH_SUPPORT", "UK_TECH_SUPPORT"];
 
@@ -32,14 +33,24 @@ export async function PUT(
     );
   }
 
+  // Build update data
+  const data: Record<string, unknown> = {};
+
+  if ("role" in body) data.role = body.role;
+  if ("isActive" in body) data.isActive = body.isActive;
+  if ("isApproved" in body) data.isApproved = body.isApproved;
+  if ("rdpHost" in body) data.rdpHost = body.rdpHost || null;
+  if ("rdpUsername" in body) data.rdpUsername = body.rdpUsername || null;
+  if ("rdpPassword" in body && body.rdpPassword) {
+    data.rdpPassword = encrypt(body.rdpPassword);
+  } else if ("rdpPassword" in body && !body.rdpPassword) {
+    data.rdpPassword = null;
+  }
+
   try {
     const user = await prisma.user.update({
       where: { id },
-      data: {
-        role: body.role,
-        isActive: body.isActive,
-        isApproved: body.isApproved,
-      },
+      data,
       select: {
         id: true,
         name: true,
@@ -47,9 +58,16 @@ export async function PUT(
         role: true,
         isActive: true,
         isApproved: true,
+        rdpHost: true,
+        rdpUsername: true,
+        rdpPassword: true,
       },
     });
-    return NextResponse.json(user);
+    return NextResponse.json({
+      ...user,
+      rdpPasswordSet: !!user.rdpPassword,
+      rdpPassword: undefined,
+    });
   } catch {
     return NextResponse.json({ error: "User not found" }, { status: 404 });
   }

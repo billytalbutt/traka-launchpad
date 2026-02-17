@@ -198,6 +198,19 @@ async function main() {
       helpText:
         "Confluence is the internal knowledge base and documentation wiki for Traka.\n\nHow to access:\nOpens in your browser. Sign in with your ASSA ABLOY network credentials.\n\nWhat it does:\n• Access internal product documentation and guides\n• Browse team spaces and project wikis\n• Find how-to articles and troubleshooting guides\n• Collaborate on documents with your team\n\nContact:\nIf you don't have access to Confluence, contact your line manager or the App Support team to request access.",
     },
+    {
+      name: "My VM",
+      description:
+        "Launch a Remote Desktop session to your personal VM. Connects using your pre-configured RDP credentials with one click.",
+      iconName: "monitor",
+      launchType: "DESKTOP",
+      category: "Remote Access",
+      version: null,
+      sortOrder: 12,
+      color: "#7c3aed",
+      helpText:
+        "My VM launches a Remote Desktop (RDP) session to your personal virtual machine.\n\nHow to access:\nClick the card to connect. Your RDP credentials must be configured first in your Profile page.\n\nSetup:\n1. Go to your Profile page\n2. Enter your VM hostname, username, and password\n3. Click Save\n4. Return to the launchpad and click this card\n\nWhat it does:\n• Stores your RDP credentials securely (encrypted)\n• Opens the native Windows Remote Desktop client (mstsc.exe)\n• Auto-logs in with your saved credentials\n• No need to remember hostnames or passwords\n\nContact:\nIf you don't know your VM details, contact your team lead or the IT team.",
+    },
   ];
 
   for (const tool of tools) {

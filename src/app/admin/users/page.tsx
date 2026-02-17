@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Users, UserCheck, UserX, ChevronDown, ShieldCheck } from "lucide-react";
+import { Users, UserCheck, UserX, ChevronDown, ShieldCheck, Monitor, ChevronRight, Check, Eye, EyeOff } from "lucide-react";
 import { cn, getInitials, formatDate } from "@/lib/utils";
 import { ALL_ROLES, ROLE_LABELS, type UserRole } from "@/types";
 
@@ -16,11 +16,32 @@ interface UserData {
   isApproved: boolean;
   createdAt: string;
   launchCount: number;
+  rdpHost: string | null;
+  rdpUsername: string | null;
+  rdpPasswordSet: boolean;
+}
+
+interface RdpEditState {
+  host: string;
+  username: string;
+  password: string;
+  showPassword: boolean;
+  saving: boolean;
+  saved: boolean;
 }
 
 export default function AdminUsersPage() {
   const [users, setUsers] = useState<UserData[]>([]);
   const [loading, setLoading] = useState(true);
+  const [expandedUserId, setExpandedUserId] = useState<string | null>(null);
+  const [rdpEdit, setRdpEdit] = useState<RdpEditState>({
+    host: "",
+    username: "",
+    password: "",
+    showPassword: false,
+    saving: false,
+    saved: false,
+  });
 
   useEffect(() => {
     fetchUsers();
@@ -49,6 +70,48 @@ export default function AdminUsersPage() {
     } else {
       const data = await res.json();
       alert(data.error || "Failed to update user");
+    }
+  };
+
+  const toggleRdpPanel = (user: UserData) => {
+    if (expandedUserId === user.id) {
+      setExpandedUserId(null);
+    } else {
+      setExpandedUserId(user.id);
+      setRdpEdit({
+        host: user.rdpHost || "",
+        username: user.rdpUsername || "",
+        password: "",
+        showPassword: false,
+        saving: false,
+        saved: false,
+      });
+    }
+  };
+
+  const saveRdpForUser = async (userId: string) => {
+    setRdpEdit((prev) => ({ ...prev, saving: true }));
+    const payload: Record<string, string> = {
+      rdpHost: rdpEdit.host,
+      rdpUsername: rdpEdit.username,
+    };
+    if (rdpEdit.password) {
+      payload.rdpPassword = rdpEdit.password;
+    }
+
+    const res = await fetch(`/api/users/${userId}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    if (res.ok) {
+      setRdpEdit((prev) => ({ ...prev, saving: false, saved: true, password: "" }));
+      setTimeout(() => setRdpEdit((prev) => ({ ...prev, saved: false })), 2000);
+      fetchUsers();
+    } else {
+      setRdpEdit((prev) => ({ ...prev, saving: false }));
+      alert("Failed to save RDP config");
     }
   };
 
@@ -222,6 +285,26 @@ export default function AdminUsersPage() {
                               Approve
                             </button>
                           )}
+                          <button
+                            onClick={() => toggleRdpPanel(user)}
+                            className={cn(
+                              "flex items-center gap-1 p-1.5 rounded-lg transition-colors text-xs",
+                              expandedUserId === user.id
+                                ? "text-purple-400 bg-purple-500/[0.08]"
+                                : user.rdpHost
+                                ? "text-purple-400/60 hover:text-purple-400 hover:bg-purple-500/[0.04]"
+                                : "text-text-ghost hover:text-text-secondary hover:bg-white/[0.02]"
+                            )}
+                            title="Configure RDP"
+                          >
+                            <Monitor className="w-3.5 h-3.5" />
+                            <ChevronRight
+                              className={cn(
+                                "w-3 h-3 transition-transform",
+                                expandedUserId === user.id && "rotate-90"
+                              )}
+                            />
+                          </button>
                           <div className="relative">
                             <select
                               value={user.role}
@@ -265,6 +348,113 @@ export default function AdminUsersPage() {
                         </div>
                       </td>
                     </motion.tr>
+                    {/* Expandable RDP config row */}
+                    {expandedUserId === user.id && (
+                      <tr className="bg-purple-500/[0.02]">
+                        <td colSpan={6} className="px-4 py-4">
+                          <div className="flex items-center gap-2 mb-3">
+                            <Monitor className="w-3.5 h-3.5 text-purple-400" />
+                            <span className="text-xs font-medium text-purple-400">
+                              RDP Configuration for {user.name || user.email}
+                            </span>
+                            {user.rdpPasswordSet && (
+                              <span className="text-[10px] text-emerald-400 ml-1">
+                                (password saved)
+                              </span>
+                            )}
+                          </div>
+                          <div className="flex items-end gap-3">
+                            <div className="flex-1">
+                              <label className="text-[10px] text-text-ghost uppercase tracking-wider mb-1 block">
+                                Hostname / IP
+                              </label>
+                              <input
+                                type="text"
+                                value={rdpEdit.host}
+                                onChange={(e) =>
+                                  setRdpEdit((prev) => ({
+                                    ...prev,
+                                    host: e.target.value,
+                                  }))
+                                }
+                                placeholder="vm-hostname.corp.local"
+                                className="w-full px-3 py-1.5 rounded-lg input-field text-xs font-mono"
+                              />
+                            </div>
+                            <div className="flex-1">
+                              <label className="text-[10px] text-text-ghost uppercase tracking-wider mb-1 block">
+                                Username
+                              </label>
+                              <input
+                                type="text"
+                                value={rdpEdit.username}
+                                onChange={(e) =>
+                                  setRdpEdit((prev) => ({
+                                    ...prev,
+                                    username: e.target.value,
+                                  }))
+                                }
+                                placeholder="DOMAIN\username"
+                                className="w-full px-3 py-1.5 rounded-lg input-field text-xs font-mono"
+                              />
+                            </div>
+                            <div className="flex-1">
+                              <label className="text-[10px] text-text-ghost uppercase tracking-wider mb-1 block">
+                                Password
+                              </label>
+                              <div className="relative">
+                                <input
+                                  type={rdpEdit.showPassword ? "text" : "password"}
+                                  value={rdpEdit.password}
+                                  onChange={(e) =>
+                                    setRdpEdit((prev) => ({
+                                      ...prev,
+                                      password: e.target.value,
+                                    }))
+                                  }
+                                  placeholder={
+                                    user.rdpPasswordSet
+                                      ? "Leave blank to keep"
+                                      : "Password"
+                                  }
+                                  className="w-full px-3 py-1.5 pr-8 rounded-lg input-field text-xs font-mono"
+                                />
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    setRdpEdit((prev) => ({
+                                      ...prev,
+                                      showPassword: !prev.showPassword,
+                                    }))
+                                  }
+                                  className="absolute right-2 top-1/2 -translate-y-1/2 text-text-ghost hover:text-text-secondary transition-colors"
+                                >
+                                  {rdpEdit.showPassword ? (
+                                    <EyeOff className="w-3.5 h-3.5" />
+                                  ) : (
+                                    <Eye className="w-3.5 h-3.5" />
+                                  )}
+                                </button>
+                              </div>
+                            </div>
+                            <button
+                              onClick={() => saveRdpForUser(user.id)}
+                              disabled={rdpEdit.saving}
+                              className="px-4 py-1.5 rounded-lg bg-purple-500/[0.1] border border-purple-500/20 text-purple-400 text-xs font-medium hover:bg-purple-500/[0.2] transition-colors disabled:opacity-50 flex items-center gap-1.5"
+                            >
+                              {rdpEdit.saved ? (
+                                <>
+                                  <Check className="w-3 h-3" />
+                                  Saved
+                                </>
+                              ) : (
+                                "Save"
+                              )}
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    )}
                   ))}
             </tbody>
           </table>

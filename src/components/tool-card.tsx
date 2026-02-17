@@ -39,6 +39,7 @@ const iconMap: Record<string, React.ComponentType<LucideProps>> = {
   ticket: Ticket,
   "book-open": BookOpen,
   settings: Settings,
+  monitor: Monitor,
 };
 
 interface ToolCardProps {
@@ -128,9 +129,9 @@ export function ToolCard({
                   <Image
                     src={customIcon}
                     alt={tool.name}
-                    width={36}
-                    height={36}
-                    className="w-9 h-9 object-contain rounded-sm"
+                    width={38}
+                    height={38}
+                    className="w-[38px] h-[38px] object-contain rounded-sm"
                   />
                 ) : (
                   <Icon

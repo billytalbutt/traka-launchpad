@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { spawn } from "child_process";
+import { decrypt } from "@/lib/crypto";
+import { spawn, execSync } from "child_process";
 import { existsSync } from "fs";
 import path from "path";
 
@@ -39,6 +40,21 @@ function launchDocsAssistant(projectPath: string) {
   setTimeout(() => {
     openUrl("https://docs.traka.test/admin");
   }, 6000);
+}
+
+function launchRdpSession(host: string, username: string, password: string) {
+  // Store credentials silently using cmdkey
+  execSync(
+    `cmdkey /generic:TERMSRV/${host} /user:${username} /pass:${password}`,
+    { windowsHide: true, stdio: "ignore" }
+  );
+
+  // Launch Remote Desktop client
+  spawn("mstsc", ["/v:" + host], {
+    detached: true,
+    stdio: "ignore",
+    windowsHide: true,
+  }).unref();
 }
 
 function launchDocsAssistantDashboard(projectPath: string) {
@@ -86,6 +102,50 @@ export async function POST(
       });
       if (user?.trakaWebUrl) {
         effectiveLaunchUrl = user.trakaWebUrl;
+      }
+    }
+
+    // For My VM, launch an RDP session with the user's configured credentials
+    if (tool.name === "My VM") {
+      const user = await prisma.user.findUnique({
+        where: { id: session.user.id },
+        select: { rdpHost: true, rdpUsername: true, rdpPassword: true },
+      });
+
+      if (!user?.rdpHost || !user?.rdpUsername || !user?.rdpPassword) {
+        return NextResponse.json({
+          message: "Launch failed",
+          launchType: tool.launchType,
+          desktopStatus: "error",
+          error:
+            "RDP not configured. Go to your Profile page to set your VM hostname, username, and password.",
+        });
+      }
+
+      try {
+        const rdpPassword = decrypt(user.rdpPassword);
+        launchRdpSession(user.rdpHost, user.rdpUsername, rdpPassword);
+
+        await prisma.toolLaunch.create({
+          data: { userId: session.user.id, toolId: id },
+        });
+
+        return NextResponse.json({
+          message: "Launch recorded",
+          launchUrl: null,
+          launchType: tool.launchType,
+          desktopStatus: "launched",
+        });
+      } catch (rdpError) {
+        return NextResponse.json({
+          message: "Launch failed",
+          launchType: tool.launchType,
+          desktopStatus: "error",
+          error:
+            rdpError instanceof Error
+              ? rdpError.message
+              : "Failed to launch RDP session",
+        });
       }
     }
 
