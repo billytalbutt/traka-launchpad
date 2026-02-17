@@ -38,6 +38,7 @@ export async function PUT(
       data: {
         role: body.role,
         isActive: body.isActive,
+        isApproved: body.isApproved,
       },
       select: {
         id: true,
@@ -45,6 +46,7 @@ export async function PUT(
         email: true,
         role: true,
         isActive: true,
+        isApproved: true,
       },
     });
     return NextResponse.json(user);

@@ -27,9 +27,10 @@ export async function POST(request: Request) {
 
     const hashedPassword = await hash(password, 12);
 
-    // First user becomes admin, others default to APP_SUPPORT
+    // First user becomes admin (auto-approved), others require approval
     const userCount = await prisma.user.count();
-    const role = userCount === 0 ? "ADMIN" : "APP_SUPPORT";
+    const isFirstUser = userCount === 0;
+    const role = isFirstUser ? "ADMIN" : "APP_SUPPORT";
 
     const user = await prisma.user.create({
       data: {
@@ -37,11 +38,18 @@ export async function POST(request: Request) {
         email,
         hashedPassword,
         role,
+        isApproved: isFirstUser,
       },
     });
 
     return NextResponse.json(
-      { message: "User created successfully", userId: user.id },
+      {
+        message: isFirstUser
+          ? "Admin account created successfully"
+          : "Account created. An administrator will review and approve your account.",
+        userId: user.id,
+        needsApproval: !isFirstUser,
+      },
       { status: 201 }
     );
   } catch (error) {

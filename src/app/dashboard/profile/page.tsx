@@ -3,14 +3,18 @@
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { motion } from "framer-motion";
-import { Mail, Shield, Activity, Star, Rocket } from "lucide-react";
+import { Mail, Shield, Activity, Star, Rocket, Globe, Check } from "lucide-react";
 import { getInitials } from "@/lib/utils";
 import type { ToolWithFavorite } from "@/types";
+import { ROLE_LABELS, type UserRole } from "@/types";
 
 export default function ProfilePage() {
   const { data: session } = useSession();
   const [tools, setTools] = useState<ToolWithFavorite[]>([]);
   const [stats, setStats] = useState({ totalLaunches: 0, favoriteCount: 0 });
+  const [trakaWebUrl, setTrakaWebUrl] = useState("");
+  const [urlSaved, setUrlSaved] = useState(false);
+  const [urlSaving, setUrlSaving] = useState(false);
 
   useEffect(() => {
     fetch("/api/tools")
@@ -23,7 +27,31 @@ export default function ProfilePage() {
         });
       })
       .catch(() => {});
+
+    fetch("/api/profile")
+      .then((r) => r.json())
+      .then((data: { trakaWebUrl: string }) => {
+        setTrakaWebUrl(data.trakaWebUrl);
+      })
+      .catch(() => {});
   }, []);
+
+  const saveTrakaWebUrl = async () => {
+    setUrlSaving(true);
+    try {
+      await fetch("/api/profile", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ trakaWebUrl }),
+      });
+      setUrlSaved(true);
+      setTimeout(() => setUrlSaved(false), 2000);
+    } catch {
+      // silently fail
+    } finally {
+      setUrlSaving(false);
+    }
+  };
 
   if (!session?.user) return null;
 
@@ -62,7 +90,7 @@ export default function ProfilePage() {
               </span>
               <span className="flex items-center gap-1.5 text-xs font-mono uppercase tracking-wider text-traka-orange">
                 <Shield className="w-3 h-3" />
-                {session.user.role?.toLowerCase()}
+                {ROLE_LABELS[session.user.role as UserRole] || session.user.role}
               </span>
             </div>
           </div>
@@ -106,6 +134,47 @@ export default function ProfilePage() {
           </motion.div>
         ))}
       </div>
+
+      {/* TrakaWEB URL setting */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.25 }}
+        className="panel rounded-lg p-6 mb-4"
+      >
+        <div className="flex items-center gap-2 mb-4">
+          <Globe className="w-3.5 h-3.5 text-traka-orange" />
+          <span className="text-label text-[10px]">TrakaWEB URL</span>
+        </div>
+        <p className="text-text-secondary text-xs mb-3">
+          Set your TrakaWEB server URL. Leave blank to use the default ({" "}
+          <span className="text-text-tertiary font-mono">http://localhost/trakaweb</span>
+          {" "}).
+        </p>
+        <div className="flex gap-2">
+          <input
+            type="url"
+            value={trakaWebUrl}
+            onChange={(e) => setTrakaWebUrl(e.target.value)}
+            placeholder="http://localhost/trakaweb"
+            className="flex-1 px-3 py-2 rounded-lg input-field text-sm font-mono"
+          />
+          <button
+            onClick={saveTrakaWebUrl}
+            disabled={urlSaving}
+            className="px-4 py-2 rounded-lg btn-primary text-sm flex items-center gap-1.5 disabled:opacity-50"
+          >
+            {urlSaved ? (
+              <>
+                <Check className="w-3.5 h-3.5" />
+                Saved
+              </>
+            ) : (
+              "Save"
+            )}
+          </button>
+        </div>
+      </motion.div>
 
       {/* Pinned tools list */}
       <motion.div

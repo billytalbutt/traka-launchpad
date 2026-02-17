@@ -41,7 +41,11 @@ export default function RegisterPage() {
         return;
       }
 
-      router.push("/login?registered=true");
+      if (data.needsApproval) {
+        router.push("/login?registered=true&pending=true");
+      } else {
+        router.push("/login?registered=true");
+      }
     } catch {
       setError("Something went wrong");
     } finally {

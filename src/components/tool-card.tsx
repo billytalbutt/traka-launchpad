@@ -60,7 +60,17 @@ export function ToolCard({
   const [isPressed, setIsPressed] = useState(false);
   const Icon = iconMap[tool.iconName] || Wrench;
   const accentColor = tool.color || "#FF8300";
-  const isTrakaWEB = tool.iconName === "trakaweb";
+
+  const customIconMap: Record<string, string> = {
+    trakaweb: "/trakaweb-logo.png",
+    swagger: "/tool-icons/swagger-logo.png",
+    confluence: "/tool-icons/confluence-logo.png",
+    jira: "/tool-icons/jira-logo.png",
+    smtp: "/tool-icons/smtp-logo.png",
+    csv: "/tool-icons/csv-logo.png",
+    "traka-ai": "/tool-icons/traka-ai-logo.png",
+  };
+  const customIcon = customIconMap[tool.iconName];
 
   const handleLaunch = useCallback(() => {
     setIsPressed(true);
@@ -114,13 +124,13 @@ export function ToolCard({
                   border: `1px solid ${accentColor}${isHovered ? "25" : "12"}`,
                 }}
               >
-                {isTrakaWEB ? (
+                {customIcon ? (
                   <Image
-                    src="/traka-logo-dark.svg"
-                    alt="TrakaWEB"
-                    width={28}
-                    height={28}
-                    className="w-7 h-auto"
+                    src={customIcon}
+                    alt={tool.name}
+                    width={36}
+                    height={36}
+                    className="w-9 h-9 object-contain rounded-sm"
                   />
                 ) : (
                   <Icon

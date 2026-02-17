@@ -7,6 +7,7 @@ CREATE TABLE "User" (
     "hashedPassword" TEXT,
     "image" TEXT,
     "role" TEXT NOT NULL DEFAULT 'APP_SUPPORT',
+    "trakaWebUrl" TEXT,
     "isActive" BOOLEAN NOT NULL DEFAULT true,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL

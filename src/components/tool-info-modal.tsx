@@ -96,7 +96,7 @@ export function ToolInfoModal({ tool, onClose, onLaunch }: ToolInfoModalProps) {
                     >
                       {isTrakaWEB ? (
                         <Image
-                          src="/traka-logo-dark.svg"
+                          src="/trakaweb-logo.png"
                           alt="TrakaWEB"
                           width={32}
                           height={32}

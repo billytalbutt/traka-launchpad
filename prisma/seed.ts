@@ -8,16 +8,24 @@ async function main() {
   const adminPassword = await hash("admin123", 12);
   const admin = await prisma.user.upsert({
     where: { email: "admin@traka.com" },
-    update: { role: "ADMIN" },
+    update: { role: "ADMIN", isApproved: true },
     create: {
       email: "admin@traka.com",
       name: "Admin",
       hashedPassword: adminPassword,
       role: "ADMIN",
+      isApproved: true,
     },
   });
 
   console.log("Created admin user:", admin.email);
+
+  // Approve all existing users (for migration from pre-approval system)
+  await prisma.user.updateMany({
+    where: { isApproved: false },
+    data: { isApproved: true },
+  });
+  console.log("Approved all existing users");
 
   // Seed tools
   const tools: Array<{
@@ -38,6 +46,7 @@ async function main() {
       description:
         "Discover, view, compare, and analyze Traka Business Engine, Comms Engine, and Integration Engine log files with pattern detection and issue highlighting.",
       iconName: "file-search",
+      launchUrl: "C:\\DEV\\Traka Tools Suite\\TrakaLogAnalyzer-WebPoC",
       launchType: "DESKTOP",
       category: "Diagnostics",
       version: "3.0.0",
@@ -51,6 +60,7 @@ async function main() {
       description:
         "Bulk create users, item access groups, and items via the Integration Engine API. Ideal for large-scale TrakaWEB deployments and testing.",
       iconName: "database",
+      launchUrl: "C:\\DEV\\Traka Tools Suite\\TrakaDataTool-Electron",
       launchType: "DESKTOP",
       category: "Data Management",
       version: "2.0.0",
@@ -63,7 +73,8 @@ async function main() {
       name: "Traka CSV User Import",
       description:
         "Import users from CSV files into TrakaWEB via the Integration Engine API with field mapping, IAG assignment, and software permissions.",
-      iconName: "file-spreadsheet",
+      iconName: "csv",
+      launchUrl: "C:\\DEV\\Traka Tools Suite\\TrakaCsvUserImportTool-Electron",
       launchType: "DESKTOP",
       category: "Data Management",
       version: "2.0.0",
@@ -76,8 +87,8 @@ async function main() {
       name: "Traka Docs Assistant",
       description:
         "AI-powered documentation assistant for Traka products. Ask questions and get instant answers with source references from the knowledge base.",
-      iconName: "bot",
-      launchUrl: "http://localhost:5173",
+      iconName: "traka-ai",
+      launchUrl: "https://docs.traka.test",
       launchType: "WEB",
       category: "Documentation",
       version: "1.0.0",
@@ -91,8 +102,8 @@ async function main() {
       description:
         "Admin control panel for the Traka Docs Assistant. Manage the knowledge base, view usage analytics, and configure AI behaviour.",
       iconName: "settings",
-      launchUrl: "http://localhost:5173/admin",
-      launchType: "WEB",
+      launchUrl: "C:\\DEV\\traka-docs-assistant\\dashboard",
+      launchType: "DESKTOP",
       category: "Documentation",
       version: "1.0.0",
       sortOrder: 5,
@@ -106,7 +117,7 @@ async function main() {
       description:
         "Modern web portal for booking and managing Traka items. Schedule key/asset check-outs with calendar integration.",
       iconName: "calendar-check",
-      launchUrl: "http://localhost:5000",
+      launchUrl: "https://bookings.traka.test",
       launchType: "WEB",
       category: "Operations",
       version: "1.0.0",
@@ -119,8 +130,8 @@ async function main() {
       name: "Integration Engine API",
       description:
         "Swagger documentation and testing interface for the Traka Integration Engine REST API. Explore endpoints and test requests.",
-      iconName: "plug",
-      launchUrl: "http://localhost:10700/Traka/swagger",
+      iconName: "swagger",
+      launchUrl: "https://api.traka.test/Traka/swagger",
       launchType: "WEB",
       category: "Development",
       version: "1.0.0",
@@ -134,7 +145,7 @@ async function main() {
       description:
         "The main TrakaWEB management console. Manage users, keys, lockers, permissions, reports, and system configuration.",
       iconName: "trakaweb",
-      launchUrl: "http://localhost/TrakaWeb",
+      launchUrl: "http://localhost/trakaweb",
       launchType: "WEB",
       category: "Operations",
       version: "4.0.0",
@@ -147,7 +158,8 @@ async function main() {
       name: "SMTP Tool",
       description:
         "Configure and test SMTP email relay settings for Traka notifications. Send test emails, verify connectivity, and diagnose delivery issues.",
-      iconName: "mail",
+      iconName: "smtp",
+      launchUrl: "C:\\DEV\\Traka Tools Suite\\TrakaSmtpTestTool\\TrakaSmtpTestTool.GUI\\bin\\Debug\\net6.0-windows\\win-x64\\TrakaSmtpTestTool.GUI.exe",
       launchType: "DESKTOP",
       category: "Diagnostics",
       version: "1.0.0",
@@ -160,7 +172,7 @@ async function main() {
       name: "Jira",
       description:
         "Atlassian Jira project management and issue tracking. Manage support tickets, track bugs, and coordinate development sprints.",
-      iconName: "ticket",
+      iconName: "jira",
       launchUrl: "https://jira.assaabloy.net/secure/Dashboard.jspa",
       launchType: "WEB",
       category: "Project Management",
@@ -175,7 +187,7 @@ async function main() {
       name: "Confluence",
       description:
         "Atlassian Confluence knowledge base and documentation wiki. Access internal documentation, guides, and team collaboration spaces.",
-      iconName: "book-open",
+      iconName: "confluence",
       launchUrl: "https://confluence.assaabloy.net/index.action#all-updates",
       launchType: "WEB",
       category: "Documentation",

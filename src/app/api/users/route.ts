@@ -16,6 +16,7 @@ export async function GET() {
       image: true,
       role: true,
       isActive: true,
+      isApproved: true,
       createdAt: true,
       _count: {
         select: { toolLaunches: true },

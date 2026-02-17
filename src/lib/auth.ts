@@ -45,7 +45,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         }
 
         if (!user.isActive) {
-          return null;
+          throw new Error("ACCOUNT_DISABLED");
         }
 
         return {
@@ -66,18 +66,20 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         if (dbUser) {
           token.id = dbUser.id;
           token.role = dbUser.role;
+          token.isApproved = dbUser.isApproved;
           token.name = dbUser.name;
           token.email = dbUser.email;
           token.picture = dbUser.image;
         }
       } else if (token.email) {
-        // Refresh role from DB on every token refresh so admin changes take effect immediately
+        // Refresh role and approval status from DB on every token refresh so admin changes take effect immediately
         const dbUser = await prisma.user.findUnique({
           where: { email: token.email as string },
-          select: { role: true },
+          select: { role: true, isApproved: true },
         });
         if (dbUser) {
           token.role = dbUser.role;
+          token.isApproved = dbUser.isApproved;
         }
       }
       return token;
@@ -86,6 +88,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       if (session.user) {
         session.user.id = token.id as string;
         session.user.role = token.role as string;
+        session.user.isApproved = token.isApproved as boolean;
         session.user.name = token.name as string;
         session.user.email = token.email as string;
         session.user.image = token.picture as string | undefined;

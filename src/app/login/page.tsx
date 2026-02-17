@@ -55,7 +55,32 @@ function LoginForm() {
     <div className="min-h-screen flex bg-void">
       {/* Left panel — Hero banner */}
       <div className="hidden lg:block lg:w-[55%] xl:w-[58%] relative overflow-hidden">
-        <ResponsiveHeroBanner />
+        <ResponsiveHeroBanner
+          logoUrl="/traka-logo-dark.svg"
+          badgeLabel="v1.0"
+          badgeText="Traka Launchpad — Now Live"
+          title="Your tools."
+          titleLine2="One place."
+          description="Access all of your Traka tools from a single command center. Launch, manage, and monitor your entire toolkit — all from one unified dashboard."
+          navLinks={[
+            { label: "Launchpad", href: "/dashboard", isActive: true },
+            { label: "Jira", href: "https://jira.assaabloy.net/secure/Dashboard.jspa" },
+            { label: "Confluence", href: "https://confluence.assaabloy.net/index.action#all-updates" },
+          ]}
+          ctaButtonText="Sign Up"
+          ctaButtonHref="/register"
+          primaryButtonText="Explore Tools"
+          primaryButtonHref="/dashboard"
+          secondaryButtonText="Learn More"
+          secondaryButtonHref="/about"
+          partnersTitle="Enabling management of your Traka Toolkit"
+          partners={[
+            { logoUrl: "/traka-logo-dark.svg", href: "#" },
+            { logoUrl: "/trakaweb-logo.png", href: "#" },
+            { logoUrl: "/jira-logo.svg", href: "#" },
+            { logoUrl: "/confluence-logo.svg", href: "#" },
+          ]}
+        />
       </div>
 
       {/* Right panel — form */}

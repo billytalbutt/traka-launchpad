@@ -21,6 +21,17 @@ export default auth((req) => {
     return Response.redirect(loginUrl);
   }
 
+  // Allow access to the pending page and sign-out for unapproved users
+  if (pathname === "/pending" || pathname === "/api/auth/signout") {
+    return;
+  }
+
+  // Redirect unapproved users to the pending approval page
+  // Check explicitly for false to avoid blocking users with old session tokens missing the field
+  if (req.auth?.user?.isApproved === false) {
+    return Response.redirect(new URL("/pending", req.nextUrl.origin));
+  }
+
   // Admin routes protection
   if (pathname.startsWith("/admin") && req.auth?.user?.role !== "ADMIN") {
     return Response.redirect(new URL("/dashboard", req.nextUrl.origin));

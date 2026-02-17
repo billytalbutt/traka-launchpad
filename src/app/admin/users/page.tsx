@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Users, UserCheck, UserX, ChevronDown } from "lucide-react";
+import { Users, UserCheck, UserX, ChevronDown, ShieldCheck } from "lucide-react";
 import { cn, getInitials, formatDate } from "@/lib/utils";
 import { ALL_ROLES, ROLE_LABELS, type UserRole } from "@/types";
 
@@ -13,6 +13,7 @@ interface UserData {
   image: string | null;
   role: string;
   isActive: boolean;
+  isApproved: boolean;
   createdAt: string;
   launchCount: number;
 }
@@ -35,7 +36,7 @@ export default function AdminUsersPage() {
 
   const handleUpdate = async (
     userId: string,
-    update: { role?: string; isActive?: boolean }
+    update: { role?: string; isActive?: boolean; isApproved?: boolean }
   ) => {
     const res = await fetch(`/api/users/${userId}`, {
       method: "PUT",
@@ -68,10 +69,16 @@ export default function AdminUsersPage() {
       </motion.div>
 
       {/* Stats row */}
-      <div className="grid grid-cols-2 sm:grid-cols-5 gap-4 mb-8">
+      <div className="grid grid-cols-2 sm:grid-cols-6 gap-4 mb-8">
         <div className="panel rounded-lg p-4">
           <p className="text-2xl font-bold text-text-primary">{users.length}</p>
           <p className="text-label text-text-secondary mt-0.5">Total Users</p>
+        </div>
+        <div className="panel rounded-lg p-4">
+          <p className="text-2xl font-bold text-amber-400">
+            {users.filter((u) => !u.isApproved).length}
+          </p>
+          <p className="text-label text-text-secondary mt-0.5">Pending Approval</p>
         </div>
         <div className="panel rounded-lg p-4">
           <p className="text-2xl font-bold text-traka-orange">
@@ -182,19 +189,39 @@ export default function AdminUsersPage() {
                         {formatDate(user.createdAt)}
                       </td>
                       <td className="py-3 px-4">
-                        <span
-                          className={cn(
-                            "text-xs px-2 py-0.5 rounded-full",
-                            user.isActive
-                              ? "bg-emerald-500/[0.04] text-emerald-400"
-                              : "bg-red-500/[0.04] text-red-400"
+                        <div className="flex items-center gap-2">
+                          {!user.isApproved ? (
+                            <span className="text-xs px-2 py-0.5 rounded-full bg-amber-500/[0.06] text-amber-400 border border-amber-500/20">
+                              Pending Approval
+                            </span>
+                          ) : (
+                            <span
+                              className={cn(
+                                "text-xs px-2 py-0.5 rounded-full",
+                                user.isActive
+                                  ? "bg-emerald-500/[0.04] text-emerald-400"
+                                  : "bg-red-500/[0.04] text-red-400"
+                              )}
+                            >
+                              {user.isActive ? "Active" : "Disabled"}
+                            </span>
                           )}
-                        >
-                          {user.isActive ? "Active" : "Disabled"}
-                        </span>
+                        </div>
                       </td>
                       <td className="py-3 px-4">
                         <div className="flex items-center justify-end gap-2">
+                          {!user.isApproved && (
+                            <button
+                              onClick={() =>
+                                handleUpdate(user.id, { isApproved: true })
+                              }
+                              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500/[0.08] border border-emerald-500/20 text-emerald-400 text-xs font-medium hover:bg-emerald-500/[0.15] transition-colors"
+                              title="Approve user"
+                            >
+                              <ShieldCheck className="w-3.5 h-3.5" />
+                              Approve
+                            </button>
+                          )}
                           <div className="relative">
                             <select
                               value={user.role}

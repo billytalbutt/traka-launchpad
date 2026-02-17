@@ -71,14 +71,28 @@ export default function DashboardPage() {
   };
 
   const handleLaunch = async (tool: ToolWithFavorite) => {
-    await fetch(`/api/tools/${tool.id}/launch`, { method: "POST" });
+    const res = await fetch(`/api/tools/${tool.id}/launch`, { method: "POST" });
+    const data = await res.json();
 
-    if (tool.launchType === "WEB" && tool.launchUrl) {
-      window.open(tool.launchUrl, "_blank", "noopener,noreferrer");
+    if (tool.launchType === "WEB") {
+      const url = data.launchUrl || tool.launchUrl;
+      if (url) window.open(url, "_blank", "noopener,noreferrer");
     } else if (tool.launchType === "DESKTOP") {
-      alert(
-        `${tool.name} is a desktop application.\n\nPlease ensure it is installed on your machine. If you need the installer, contact your administrator.`
-      );
+      if (data.desktopStatus === "launched") {
+        // Tool launched successfully — no alert needed
+      } else if (data.desktopStatus === "not_found") {
+        alert(
+          `${tool.name} was not found at the expected location.\n\n${data.error}\n\nPlease ensure it is installed or contact your administrator.`
+        );
+      } else if (data.desktopStatus === "error") {
+        alert(
+          `Failed to launch ${tool.name}.\n\n${data.error}\n\nPlease try launching it manually.`
+        );
+      } else {
+        alert(
+          `${tool.name} is a desktop application. No launch path is configured.\n\nContact your administrator to set up the launch path.`
+        );
+      }
     } else if (tool.launchType === "PROTOCOL" && tool.launchUrl) {
       window.location.href = tool.launchUrl;
     }

@@ -1,0 +1,32 @@
+# Traka Launchpad - Caddy HTTPS Reverse Proxy
+# Uses Caddy's internal CA for TLS certificates (local dev, not public).
+# Run 'caddy trust' once as admin to install the CA cert into the Windows trust store.
+
+{
+	auto_https disable_redirects
+	http_port 8080
+}
+
+# Traka Launchpad (Next.js on port 3000)
+https://launchpad.traka.test {
+	tls internal
+	reverse_proxy localhost:3000
+}
+
+# Traka Docs Assistant (Vite on port 5173)
+https://docs.traka.test {
+	tls internal
+	reverse_proxy localhost:5173
+}
+
+# TrakaWEB Item Bookings (port 5000)
+https://bookings.traka.test {
+	tls internal
+	reverse_proxy localhost:5000
+}
+
+# Integration Engine API / Swagger (port 10700)
+https://api.traka.test {
+	tls internal
+	reverse_proxy localhost:10700
+}

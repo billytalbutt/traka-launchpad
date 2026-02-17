@@ -60,8 +60,8 @@ export function Sidebar() {
         className={cn(
           "flex items-center gap-3 px-3 py-2 rounded-md transition-all relative group",
           isActive
-            ? "text-traka-orange bg-traka-orange/[0.06]"
-            : "text-text-tertiary hover:text-text-secondary hover:bg-panel-hover"
+            ? "bg-traka-orange/[0.06]"
+            : "hover:bg-panel-hover"
         )}
       >
         {/* Active indicator — left bar */}
@@ -73,7 +73,12 @@ export function Sidebar() {
               : "h-0 bg-transparent"
           )}
         />
-        <Icon className="w-[18px] h-[18px] flex-shrink-0" />
+        <Icon
+          className={cn(
+            "w-[18px] h-[18px] flex-shrink-0 transition-colors",
+            isActive ? "text-traka-orange" : "text-text-tertiary group-hover:text-traka-orange/70"
+          )}
+        />
         <AnimatePresence>
           {!collapsed && (
             <motion.span
@@ -81,8 +86,10 @@ export function Sidebar() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               className={cn(
-                "text-[13px] whitespace-nowrap",
-                isActive ? "font-medium" : "font-normal"
+                "text-[13px] whitespace-nowrap transition-colors",
+                isActive
+                  ? "font-medium text-text-primary"
+                  : "font-normal text-text-secondary group-hover:text-text-primary"
               )}
             >
               {label}
@@ -100,40 +107,31 @@ export function Sidebar() {
       className="fixed left-0 top-0 h-screen z-40 flex flex-col bg-panel border-r border-border-subtle"
     >
       {/* Header */}
-      <div className="flex items-center gap-2.5 px-3 h-14 border-b border-border-subtle">
+      <div className="flex items-center gap-2 px-3 h-14 border-b border-border-subtle overflow-hidden">
+        <Image
+          src="/launchpad-rocket-logo.png"
+          alt="Launchpad"
+          width={26}
+          height={26}
+          className="w-[26px] h-[26px] rounded-md flex-shrink-0"
+        />
         <AnimatePresence mode="wait">
-          {collapsed ? (
-            <motion.div
-              key="collapsed"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="flex-shrink-0 w-8"
-            >
-              <Image
-                src="/traka-mark.svg"
-                alt="Traka"
-                width={32}
-                height={16}
-                className="w-8 h-auto"
-              />
-            </motion.div>
-          ) : (
+          {collapsed ? null : (
             <motion.div
               key="expanded"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="flex items-center gap-2.5"
+              className="flex items-center gap-1.5 min-w-0"
             >
               <Image
                 src="/traka-mark.svg"
                 alt="Traka"
-                width={80}
-                height={20}
-                className="h-5 w-auto"
+                width={72}
+                height={18}
+                className="h-[18px] w-auto flex-shrink-0"
               />
-              <span className="font-display font-semibold text-[11px] text-text-tertiary uppercase tracking-[0.1em] whitespace-nowrap">
+              <span className="font-display font-semibold text-[10px] text-text-tertiary uppercase tracking-[0.08em] whitespace-nowrap">
                 Launchpad
               </span>
             </motion.div>
