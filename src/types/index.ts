@@ -29,6 +29,7 @@ export interface ToolWithFavorite {
   sortOrder: number;
   color: string | null;
   allowedRoles: string | null;
+  helpText: string | null;
   isFavorite: boolean;
   launchCount: number;
 }

@@ -29,6 +29,7 @@ interface Tool {
   sortOrder: number;
   color: string | null;
   allowedRoles: string | null;
+  helpText: string | null;
 }
 
 const emptyTool: Omit<Tool, "id"> = {
@@ -43,6 +44,7 @@ const emptyTool: Omit<Tool, "id"> = {
   sortOrder: 0,
   color: "#0078D4",
   allowedRoles: null,
+  helpText: null,
 };
 
 export default function AdminToolsPage() {
@@ -265,6 +267,24 @@ export default function AdminToolsPage() {
                     }
                     rows={3}
                     className="input-field w-full resize-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-label text-text-secondary mb-1">
+                    Info Panel Text
+                  </label>
+                  <p className="text-[11px] text-text-ghost mb-2">
+                    Extended help text shown when users click the info button. Use blank lines to separate sections. Lines ending with &quot;:&quot; become headings. Start lines with &quot;•&quot; for bullet points.
+                  </p>
+                  <textarea
+                    value={editing.helpText || ""}
+                    onChange={(e) =>
+                      setEditing({ ...editing, helpText: e.target.value || null })
+                    }
+                    rows={6}
+                    placeholder={"How to access:\nOpen in your browser at...\n\nWhat it does:\n• Feature one\n• Feature two\n\nContact:\nReach out to the App Support team."}
+                    className="input-field w-full resize-none placeholder:text-text-ghost font-mono text-xs"
                   />
                 </div>
 

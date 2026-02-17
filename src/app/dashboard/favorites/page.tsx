@@ -4,11 +4,13 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Star, Heart } from "lucide-react";
 import { ToolCard } from "@/components/tool-card";
+import { ToolInfoModal } from "@/components/tool-info-modal";
 import type { ToolWithFavorite } from "@/types";
 
 export default function FavoritesPage() {
   const [tools, setTools] = useState<ToolWithFavorite[]>([]);
   const [loading, setLoading] = useState(true);
+  const [infoTool, setInfoTool] = useState<ToolWithFavorite | null>(null);
 
   useEffect(() => {
     fetchTools();
@@ -102,10 +104,18 @@ export default function FavoritesPage() {
               index={i}
               onToggleFavorite={handleToggleFavorite}
               onLaunch={handleLaunch}
+              onShowInfo={setInfoTool}
             />
           ))}
         </div>
       )}
+
+      {/* Tool Info Modal */}
+      <ToolInfoModal
+        tool={infoTool}
+        onClose={() => setInfoTool(null)}
+        onLaunch={handleLaunch}
+      />
     </div>
   );
 }

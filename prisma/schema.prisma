@@ -75,6 +75,7 @@ model Tool {
   sortOrder   Int      @default(0)
   color        String?  // Optional accent color for the card
   allowedRoles String?  // Comma-separated roles that can access this tool (empty = all roles)
+  helpText     String?  // Extended info shown in the info panel
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 

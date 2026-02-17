@@ -18,8 +18,11 @@ import {
   Mail,
   Ticket,
   BookOpen,
+  Info,
+  Settings,
   type LucideProps,
 } from "lucide-react";
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 import type { ToolWithFavorite } from "@/types";
 
@@ -35,6 +38,7 @@ const iconMap: Record<string, React.ComponentType<LucideProps>> = {
   mail: Mail,
   ticket: Ticket,
   "book-open": BookOpen,
+  settings: Settings,
 };
 
 interface ToolCardProps {
@@ -42,6 +46,7 @@ interface ToolCardProps {
   index: number;
   onToggleFavorite: (toolId: string) => void;
   onLaunch: (tool: ToolWithFavorite) => void;
+  onShowInfo: (tool: ToolWithFavorite) => void;
 }
 
 export function ToolCard({
@@ -49,11 +54,13 @@ export function ToolCard({
   index,
   onToggleFavorite,
   onLaunch,
+  onShowInfo,
 }: ToolCardProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [isPressed, setIsPressed] = useState(false);
   const Icon = iconMap[tool.iconName] || Wrench;
   const accentColor = tool.color || "#FF8300";
+  const isTrakaWEB = tool.iconName === "trakaweb";
 
   const handleLaunch = useCallback(() => {
     setIsPressed(true);
@@ -94,7 +101,7 @@ export function ToolCard({
         </div>
 
         <div className="p-5 flex flex-col flex-1">
-          {/* Header row: Icon + type badge + favorite */}
+          {/* Header row: Icon + type badge + actions */}
           <div className="flex items-start justify-between mb-4">
             <div className="flex items-center gap-3">
               {/* Icon container */}
@@ -107,10 +114,20 @@ export function ToolCard({
                   border: `1px solid ${accentColor}${isHovered ? "25" : "12"}`,
                 }}
               >
-                <Icon
-                  className="w-5 h-5 transition-colors duration-200"
-                  style={{ color: isHovered ? accentColor : "#8892AB" }}
-                />
+                {isTrakaWEB ? (
+                  <Image
+                    src="/traka-mark.svg"
+                    alt="TrakaWEB"
+                    width={20}
+                    height={20}
+                    className="w-5 h-auto"
+                  />
+                ) : (
+                  <Icon
+                    className="w-5 h-5 transition-colors duration-200"
+                    style={{ color: isHovered ? accentColor : "#8892AB" }}
+                  />
+                )}
               </div>
 
               {/* Launch type indicator */}
@@ -129,24 +146,42 @@ export function ToolCard({
               </span>
             </div>
 
-            {/* Favorite */}
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                onToggleFavorite(tool.id);
-              }}
-              className={cn(
-                "p-1.5 rounded-md transition-all -mr-1 -mt-1",
-                tool.isFavorite
-                  ? "text-traka-orange"
-                  : "text-text-ghost hover:text-text-tertiary"
-              )}
-            >
-              <Star
-                className="w-3.5 h-3.5"
-                fill={tool.isFavorite ? "currentColor" : "none"}
-              />
-            </button>
+            {/* Action buttons */}
+            <div className="flex items-center gap-0.5 -mr-1 -mt-1">
+              {/* Info button */}
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onShowInfo(tool);
+                }}
+                className={cn(
+                  "p-1.5 rounded-md transition-all",
+                  "text-text-ghost hover:text-text-tertiary hover:bg-white/[0.04]"
+                )}
+                title="More info"
+              >
+                <Info className="w-3.5 h-3.5" />
+              </button>
+
+              {/* Favorite */}
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onToggleFavorite(tool.id);
+                }}
+                className={cn(
+                  "p-1.5 rounded-md transition-all",
+                  tool.isFavorite
+                    ? "text-traka-orange"
+                    : "text-text-ghost hover:text-text-tertiary"
+                )}
+              >
+                <Star
+                  className="w-3.5 h-3.5"
+                  fill={tool.isFavorite ? "currentColor" : "none"}
+                />
+              </button>
+            </div>
           </div>
 
           {/* Title + Description */}

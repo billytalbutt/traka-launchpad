@@ -59,6 +59,7 @@ const createToolSchema = z.object({
   color: z.string().nullable().optional(),
   sortOrder: z.number().default(0),
   allowedRoles: z.string().nullable().optional(),
+  helpText: z.string().nullable().optional(),
 });
 
 export async function POST(request: Request) {

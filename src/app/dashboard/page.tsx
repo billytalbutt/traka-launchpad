@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import { motion } from "framer-motion";
 import { Star, Rocket, Activity } from "lucide-react";
 import { ToolCard } from "@/components/tool-card";
+import { ToolInfoModal } from "@/components/tool-info-modal";
 import { SearchBar } from "@/components/search-bar";
 import { AnnouncementsBanner } from "@/components/announcements-banner";
 import type { ToolWithFavorite } from "@/types";
@@ -15,6 +16,7 @@ export default function DashboardPage() {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("all");
   const [loading, setLoading] = useState(true);
+  const [infoTool, setInfoTool] = useState<ToolWithFavorite | null>(null);
 
   useEffect(() => {
     fetchTools();
@@ -137,6 +139,7 @@ export default function DashboardPage() {
                 index={i}
                 onToggleFavorite={handleToggleFavorite}
                 onLaunch={handleLaunch}
+                onShowInfo={setInfoTool}
               />
             ))}
           </div>
@@ -209,11 +212,19 @@ export default function DashboardPage() {
                 index={i}
                 onToggleFavorite={handleToggleFavorite}
                 onLaunch={handleLaunch}
+                onShowInfo={setInfoTool}
               />
             ))}
           </div>
         )}
       </motion.div>
+
+      {/* Tool Info Modal */}
+      <ToolInfoModal
+        tool={infoTool}
+        onClose={() => setInfoTool(null)}
+        onLaunch={handleLaunch}
+      />
     </div>
   );
 }
