@@ -9,7 +9,8 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const userRole = session.user.role;
+  // Normalize legacy "USER" role to "APP_SUPPORT"
+  const userRole = session.user.role === "USER" ? "APP_SUPPORT" : session.user.role;
   const isAdmin = userRole === "ADMIN";
 
   const tools = await prisma.tool.findMany({

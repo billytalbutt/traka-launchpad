@@ -70,6 +70,15 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           token.email = dbUser.email;
           token.picture = dbUser.image;
         }
+      } else if (token.email) {
+        // Refresh role from DB on every token refresh so admin changes take effect immediately
+        const dbUser = await prisma.user.findUnique({
+          where: { email: token.email as string },
+          select: { role: true },
+        });
+        if (dbUser) {
+          token.role = dbUser.role;
+        }
       }
       return token;
     },
