@@ -39,6 +39,7 @@ const iconMap: Record<string, React.ComponentType<LucideProps>> = {
   ticket: Ticket,
   "book-open": BookOpen,
   settings: Settings,
+  "traka-ai-settings": Settings,
   monitor: Monitor,
 };
 
@@ -70,8 +71,14 @@ export function ToolCard({
     smtp: "/tool-icons/smtp-logo.png",
     csv: "/tool-icons/csv-logo.png",
     "traka-ai": "/tool-icons/traka-ai-logo.png",
+    "traka-ai-settings": "/tool-icons/traka-ai-logo.png",
+    rdp: "/tool-icons/rdp-logo.png",
   };
   const customIcon = customIconMap[tool.iconName];
+
+  const standaloneIcons = new Set(["traka-ai", "traka-ai-settings"]);
+  const isStandalone = standaloneIcons.has(tool.iconName);
+  const hasBadge = tool.iconName === "traka-ai-settings";
 
   const handleLaunch = useCallback(() => {
     setIsPressed(true);
@@ -116,30 +123,48 @@ export function ToolCard({
           <div className="flex items-start justify-between mb-4">
             <div className="flex items-center gap-3">
               {/* Icon container */}
-              <div
-                className="w-10 h-10 rounded-md flex items-center justify-center transition-all duration-200"
-                style={{
-                  backgroundColor: isHovered
-                    ? `${accentColor}15`
-                    : `${accentColor}08`,
-                  border: `1px solid ${accentColor}${isHovered ? "25" : "12"}`,
-                }}
-              >
-                {customIcon ? (
+              {isStandalone ? (
+                <div className="relative w-10 h-10 flex items-center justify-center flex-shrink-0">
                   <Image
-                    src={customIcon}
+                    src={customIcon!}
                     alt={tool.name}
-                    width={38}
-                    height={38}
-                    className="w-[38px] h-[38px] object-contain rounded-sm"
+                    width={36}
+                    height={36}
+                    className="w-9 h-9 object-contain"
                   />
-                ) : (
-                  <Icon
-                    className="w-5 h-5 transition-colors duration-200"
-                    style={{ color: isHovered ? accentColor : "#8892AB" }}
-                  />
-                )}
-              </div>
+                  {hasBadge && (
+                    <Settings
+                      className="absolute -bottom-[1px] -right-[1px] w-[14px] h-[14px] text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.6)]"
+                      strokeWidth={2.5}
+                    />
+                  )}
+                </div>
+              ) : (
+                <div
+                  className="relative w-10 h-10 rounded-md flex items-center justify-center overflow-hidden transition-all duration-200"
+                  style={{
+                    backgroundColor: isHovered
+                      ? `${accentColor}15`
+                      : `${accentColor}08`,
+                    border: `1px solid ${accentColor}${isHovered ? "25" : "12"}`,
+                  }}
+                >
+                  {customIcon ? (
+                    <Image
+                      src={customIcon}
+                      alt={tool.name}
+                      width={38}
+                      height={38}
+                      className="w-[38px] h-[38px] object-contain rounded-sm"
+                    />
+                  ) : (
+                    <Icon
+                      className="w-5 h-5 transition-colors duration-200"
+                      style={{ color: isHovered ? accentColor : "#8892AB" }}
+                    />
+                  )}
+                </div>
+              )}
 
               {/* Launch type indicator */}
               <span className="text-label text-[10px] flex items-center gap-1">

@@ -57,6 +57,7 @@ function LoginForm() {
       <div className="hidden lg:block lg:w-[55%] xl:w-[58%] relative overflow-hidden">
         <ResponsiveHeroBanner
           logoUrl="/traka-logo-dark.svg"
+          badgeLogoUrl="/launchpad-rocket-logo.png"
           badgeLabel="v1.0"
           badgeText="Traka Launchpad — Now Live"
           title="Your tools."
@@ -75,8 +76,9 @@ function LoginForm() {
           secondaryButtonHref="/about"
           partnersTitle="Enabling management of your Traka Toolkit"
           partners={[
-            { logoUrl: "/traka-logo-dark.svg", href: "#" },
             { logoUrl: "/trakaweb-logo.png", href: "#" },
+            { logoUrl: "/tool-icons/traka-ai-logo.png", href: "#" },
+            { logoUrl: "/tool-icons/swagger-logo.png", href: "#" },
             { logoUrl: "/jira-logo.svg", href: "#" },
             { logoUrl: "/confluence-logo.svg", href: "#" },
           ]}

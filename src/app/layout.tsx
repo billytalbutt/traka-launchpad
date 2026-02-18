@@ -4,6 +4,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Traka Launchpad",
   description: "Your central hub for all Traka tools and products",
+  icons: { icon: "/icon.png" },
 };
 
 export default function RootLayout({

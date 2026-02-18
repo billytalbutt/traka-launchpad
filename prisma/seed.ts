@@ -101,7 +101,7 @@ async function main() {
       name: "Docs Assistant Control Panel",
       description:
         "Admin control panel for the Traka Docs Assistant. Manage the knowledge base, view usage analytics, and configure AI behaviour.",
-      iconName: "settings",
+      iconName: "traka-ai-settings",
       launchUrl: "C:\\DEV\\traka-docs-assistant\\dashboard",
       launchType: "DESKTOP",
       category: "Documentation",
@@ -202,7 +202,7 @@ async function main() {
       name: "My VM",
       description:
         "Launch a Remote Desktop session to your personal VM. Connects using your pre-configured RDP credentials with one click.",
-      iconName: "monitor",
+      iconName: "rdp",
       launchType: "DESKTOP",
       category: "Remote Access",
       version: null,

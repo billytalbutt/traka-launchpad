@@ -107,13 +107,13 @@ export function Sidebar() {
       className="fixed left-0 top-0 h-screen z-40 flex flex-col bg-panel border-r border-border-subtle"
     >
       {/* Header */}
-      <div className="flex items-center gap-2 px-3 h-14 border-b border-border-subtle overflow-hidden">
+      <div className="flex items-center gap-2.5 px-3 h-11 border-b border-border-subtle overflow-hidden">
         <Image
           src="/launchpad-rocket-logo.png"
           alt="Launchpad"
-          width={26}
-          height={26}
-          className="w-[26px] h-[26px] rounded-md flex-shrink-0"
+          width={28}
+          height={28}
+          className="w-7 h-7 rounded-md flex-shrink-0"
         />
         <AnimatePresence mode="wait">
           {collapsed ? null : (
@@ -122,16 +122,16 @@ export function Sidebar() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="flex items-center gap-1.5 min-w-0"
+              className="flex flex-col justify-center min-w-0 leading-none"
             >
               <Image
                 src="/traka-mark.svg"
                 alt="Traka"
-                width={72}
-                height={18}
-                className="h-[18px] w-auto flex-shrink-0"
+                width={68}
+                height={16}
+                className="h-4 w-auto flex-shrink-0"
               />
-              <span className="font-display font-semibold text-[10px] text-text-tertiary uppercase tracking-[0.08em] whitespace-nowrap">
+              <span className="font-display font-semibold text-[9px] text-text-tertiary uppercase tracking-[0.08em] whitespace-nowrap mt-[1px]">
                 Launchpad
               </span>
             </motion.div>

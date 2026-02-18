@@ -15,6 +15,7 @@ interface Partner {
 
 interface ResponsiveHeroBannerProps {
     logoUrl?: string;
+    badgeLogoUrl?: string;
     backgroundImageUrl?: string;
     navLinks?: NavLink[];
     ctaButtonText?: string;
@@ -34,6 +35,7 @@ interface ResponsiveHeroBannerProps {
 
 const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
     logoUrl = "https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/febf2421-4a9a-42d6-871d-ff4f9518021c_1600w.png",
+    badgeLogoUrl,
     backgroundImageUrl = "https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/0e2dbea0-c0a9-413f-a57b-af279633c0df_3840w.jpg",
     navLinks = [
         { label: "Home", href: "#", isActive: true },
@@ -77,11 +79,19 @@ const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
             <header className="z-10 xl:top-4 relative">
                 <div className="mx-6">
                     <div className="flex items-center justify-between pt-4">
-                        <a
-                            href="#"
-                            className="inline-flex items-center justify-center bg-center w-[160px] h-[40px] bg-contain bg-no-repeat rounded"
-                            style={{ backgroundImage: `url(${logoUrl})` }}
-                        />
+                        <div className="flex items-center gap-1">
+                            {badgeLogoUrl && (
+                                <div
+                                    className="w-[38px] h-[38px] rounded-md bg-contain bg-center bg-no-repeat flex-shrink-0"
+                                    style={{ backgroundImage: `url(${badgeLogoUrl})` }}
+                                />
+                            )}
+                            <a
+                                href="#"
+                                className="inline-flex items-center justify-center bg-left w-[100px] h-[40px] bg-contain bg-no-repeat rounded"
+                                style={{ backgroundImage: `url(${logoUrl})` }}
+                            />
+                        </div>
 
                         <nav className="hidden md:flex items-center gap-2">
                             <div className="flex items-center gap-1 rounded-full bg-white/5 px-1 py-1 ring-1 ring-white/10 backdrop-blur">

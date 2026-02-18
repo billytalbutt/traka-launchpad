@@ -9,15 +9,14 @@ import path from "path";
 function spawnHidden(command: string, args: string[], cwd: string) {
   spawn(command, args, {
     cwd,
-    detached: true,
     stdio: "ignore",
     windowsHide: true,
+    shell: true,
   }).unref();
 }
 
 function openUrl(url: string) {
   spawn("cmd.exe", ["/c", "start", "", url], {
-    detached: true,
     stdio: "ignore",
     windowsHide: true,
   }).unref();
@@ -33,7 +32,7 @@ function launchDocsAssistant(projectPath: string) {
 
   setTimeout(() => {
     if (existsSync(frontendPath)) {
-      spawnHidden("cmd.exe", ["/c", "npm", "run", "dev"], frontendPath);
+      spawnHidden("npm", ["run", "dev"], frontendPath);
     }
   }, 2000);
 
@@ -49,9 +48,7 @@ function launchRdpSession(host: string, username: string, password: string) {
     { windowsHide: true, stdio: "ignore" }
   );
 
-  // Launch Remote Desktop client
   spawn("mstsc", ["/v:" + host], {
-    detached: true,
     stdio: "ignore",
     windowsHide: true,
   }).unref();
@@ -67,7 +64,7 @@ function launchDocsAssistantDashboard(projectPath: string) {
 
   setTimeout(() => {
     if (existsSync(frontendPath)) {
-      spawnHidden("cmd.exe", ["/c", "npm", "run", "dev"], frontendPath);
+      spawnHidden("npm", ["run", "dev"], frontendPath);
     }
   }, 3000);
 
@@ -182,12 +179,11 @@ export async function POST(
           launchDocsAssistant(toolPath);
         } else if (toolPath.endsWith(".exe")) {
           spawn(toolPath, [], {
-            detached: true,
             stdio: "ignore",
             windowsHide: true,
           }).unref();
         } else {
-          spawnHidden("cmd.exe", ["/c", "npm", "start"], toolPath);
+          spawnHidden("npm", ["start"], toolPath);
         }
 
         return NextResponse.json({
