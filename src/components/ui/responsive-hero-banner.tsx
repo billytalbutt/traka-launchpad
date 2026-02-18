@@ -20,6 +20,7 @@ interface ResponsiveHeroBannerProps {
     navLinks?: NavLink[];
     ctaButtonText?: string;
     ctaButtonHref?: string;
+    onCtaClick?: () => void;
     badgeText?: string;
     badgeLabel?: string;
     title?: string;
@@ -46,6 +47,7 @@ const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
     ],
     ctaButtonText = "Reserve Seat",
     ctaButtonHref = "#",
+    onCtaClick,
     badgeLabel = "New",
     badgeText = "First Commercial Flight to Mars 2026",
     title = "Journey Beyond Earth",
@@ -105,16 +107,29 @@ const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
                                         {link.label}
                                     </a>
                                 ))}
-                                <a
-                                    href={ctaButtonHref}
-                                    className="ml-1 inline-flex items-center gap-2 rounded-full bg-white px-3.5 py-2 text-sm font-medium text-neutral-900 hover:bg-white/90 font-sans transition-colors"
-                                >
-                                    {ctaButtonText}
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
-                                        <path d="M7 7h10v10" />
-                                        <path d="M7 17 17 7" />
-                                    </svg>
-                                </a>
+                                {onCtaClick ? (
+                                    <button
+                                        onClick={onCtaClick}
+                                        className="ml-1 inline-flex items-center gap-2 rounded-full bg-white px-3.5 py-2 text-sm font-medium text-neutral-900 hover:bg-white/90 font-sans transition-colors cursor-pointer"
+                                    >
+                                        {ctaButtonText}
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
+                                            <path d="M7 7h10v10" />
+                                            <path d="M7 17 17 7" />
+                                        </svg>
+                                    </button>
+                                ) : (
+                                    <a
+                                        href={ctaButtonHref}
+                                        className="ml-1 inline-flex items-center gap-2 rounded-full bg-white px-3.5 py-2 text-sm font-medium text-neutral-900 hover:bg-white/90 font-sans transition-colors"
+                                    >
+                                        {ctaButtonText}
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
+                                            <path d="M7 7h10v10" />
+                                            <path d="M7 17 17 7" />
+                                        </svg>
+                                    </a>
+                                )}
                             </div>
                         </nav>
 
