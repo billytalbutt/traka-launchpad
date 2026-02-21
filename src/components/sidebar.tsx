@@ -14,6 +14,7 @@ import {
   Wrench,
   Users,
   Megaphone,
+  Server,
   LogOut,
   ChevronLeft,
   ChevronRight,
@@ -32,6 +33,7 @@ const adminNav = [
   { href: "/admin/users", icon: Users, label: "Manage Users" },
   { href: "/admin/analytics", icon: BarChart3, label: "Analytics" },
   { href: "/admin/announcements", icon: Megaphone, label: "Announcements" },
+  { href: "/admin/services", icon: Server, label: "Services" },
 ];
 
 export function Sidebar() {

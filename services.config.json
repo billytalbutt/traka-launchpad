@@ -1,0 +1,33 @@
+{
+  "_comment": "Windows service definitions for the Traka Services control panel. Update 'name' to match the exact internal service name shown in services.msc (right-click > Properties > General > Service name).",
+  "services": [
+    {
+      "name": "TrakaWebService",
+      "displayName": "TrakaWEB Service",
+      "description": "Core TrakaWEB application and API server",
+      "color": "#ff8300",
+      "logProvider": "TrakaWebService"
+    },
+    {
+      "name": "TrakaDataService",
+      "displayName": "Traka Data Service",
+      "description": "Database access and data synchronisation layer",
+      "color": "#0078D4",
+      "logProvider": "TrakaDataService"
+    },
+    {
+      "name": "TrakaScheduler",
+      "displayName": "Traka Scheduler",
+      "description": "Automated task scheduling and background jobs",
+      "color": "#7c3aed",
+      "logProvider": "TrakaScheduler"
+    },
+    {
+      "name": "TrakaHardwareService",
+      "displayName": "Traka Hardware Service",
+      "description": "Hardware communication and device management",
+      "color": "#059669",
+      "logProvider": "TrakaHardwareService"
+    }
+  ]
+}
