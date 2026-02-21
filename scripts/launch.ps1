@@ -2,7 +2,7 @@
 # Double-click shortcut runs this: starts services if needed, opens browser.
 
 $root = Split-Path -Parent $PSScriptRoot
-$url = "https://launchpad.traka.test"
+$url = "http://localhost:3000"
 $port = 3000
 $maxWait = 30
 
@@ -25,11 +25,6 @@ if (Test-PortOpen) {
 
 # Start Next.js dev server in background
 Start-Process -FilePath "npm" -ArgumentList "run dev" -WorkingDirectory $root -WindowStyle Hidden
-
-# Start Caddy HTTPS reverse proxy in background
-$caddyExe = Join-Path $root "caddy\caddy.exe"
-$caddyfile = Join-Path $root "caddy\Caddyfile"
-Start-Process -FilePath $caddyExe -ArgumentList "run --config `"$caddyfile`"" -WindowStyle Hidden
 
 # Wait for the dev server to be ready
 $elapsed = 0
