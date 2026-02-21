@@ -8,7 +8,7 @@ Write-Host ""
 
 # Start Next.js dev server in background
 Write-Host "[1/2] Starting Next.js dev server (port 3000)..." -ForegroundColor Yellow
-$nextjs = Start-Process -FilePath "npm" -ArgumentList "run dev" -WorkingDirectory $root -PassThru -WindowStyle Hidden
+$nextjs = Start-Process -FilePath "cmd.exe" -ArgumentList "/c npm run dev" -WorkingDirectory $root -PassThru -WindowStyle Hidden
 Write-Host "       PID: $($nextjs.Id)" -ForegroundColor DarkGray
 
 Start-Sleep -Seconds 2

@@ -2,8 +2,8 @@
 # Double-click shortcut runs this: starts services if needed, opens browser.
 
 $root = Split-Path -Parent $PSScriptRoot
-$url = "http://localhost:3000"
-$port = 3000
+$url = "http://localhost:3847"
+$port = 3847
 $maxWait = 30
 
 function Test-PortOpen {
@@ -24,7 +24,8 @@ if (Test-PortOpen) {
 }
 
 # Start Next.js dev server in background
-Start-Process -FilePath "npm" -ArgumentList "run dev" -WorkingDirectory $root -WindowStyle Hidden
+# Must use cmd.exe because npm is a .ps1/.cmd batch script on Windows
+Start-Process -FilePath "cmd.exe" -ArgumentList "/c npm run dev" -WorkingDirectory $root -WindowStyle Hidden
 
 # Wait for the dev server to be ready
 $elapsed = 0

@@ -7,10 +7,10 @@
 	http_port 8080
 }
 
-# Traka Launchpad (Next.js on port 3000)
+# Traka Launchpad (Next.js on port 3847)
 https://launchpad.traka.test {
 	tls internal
-	reverse_proxy localhost:3000
+	reverse_proxy localhost:3847
 }
 
 # Traka Docs Assistant (Vite on port 5173)
