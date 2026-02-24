@@ -15,7 +15,7 @@ npm run setup
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+Open [http://localhost:3847](http://localhost:3847) in your browser.
 
 ### Default Admin Login
 
@@ -82,8 +82,10 @@ When ready for production deployment:
 
 1. Go to [Google Cloud Console](https://console.cloud.google.com/apis/credentials)
 2. Create OAuth 2.0 Client ID
-3. Set authorized redirect URI to `http://localhost:3000/api/auth/callback/google`
+3. Under **Authorized redirect URIs**, add: `http://localhost:3847/api/auth/callback/google`
 4. Add client ID and secret to `.env.local`
+
+> **Important:** The redirect URI registered in Google Cloud Console must exactly match the port in your `NEXTAUTH_URL` (`.env.local`) and the `--port` flag in `package.json` `dev` script. If you ever change the port, update all three: `package.json`, `.env.local`, and the Google Cloud Console redirect URI.
 
 ## Project Structure
 

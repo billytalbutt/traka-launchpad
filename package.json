@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
+    "predev": "node scripts/check-config.mjs",
     "dev": "next dev --turbopack --hostname 0.0.0.0 --port 3847",
     "build": "next build",
     "start": "next start",

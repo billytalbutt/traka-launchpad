@@ -110,6 +110,18 @@ model ToolLaunch {
   tool Tool @relation(fields: [toolId], references: [id], onDelete: Cascade)
 }
 
+model Setting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String
+  label     String   // Human-readable name shown in admin UI
+  description String? // Optional helper text
+  type      String   @default("string") // string | number | boolean | select
+  options   String?  // JSON array of allowed values for "select" type
+  updatedAt DateTime @updatedAt
+  updatedBy String?  // User ID who last changed this setting
+}
+
 model Announcement {
   id        String    @id @default(cuid())
   title     String

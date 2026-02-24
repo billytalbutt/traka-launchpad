@@ -3,7 +3,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useSession, signOut } from "next-auth/react";
+import { useSession } from "next-auth/react";
+import { resilientSignOut } from "@/lib/sign-out";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import {
@@ -15,6 +16,7 @@ import {
   Users,
   Megaphone,
   Server,
+  Settings,
   LogOut,
   ChevronLeft,
   ChevronRight,
@@ -34,6 +36,7 @@ const adminNav = [
   { href: "/admin/analytics", icon: BarChart3, label: "Analytics" },
   { href: "/admin/announcements", icon: Megaphone, label: "Announcements" },
   { href: "/admin/services", icon: Server, label: "Services" },
+  { href: "/admin/settings", icon: Settings, label: "Settings" },
 ];
 
 export function Sidebar() {
@@ -198,7 +201,7 @@ export function Sidebar() {
 
         <div className="flex items-center gap-0.5">
           <button
-            onClick={() => signOut({ callbackUrl: "/login" })}
+            onClick={() => resilientSignOut("/login")}
             className="flex items-center gap-2 px-2.5 py-1.5 rounded-md text-text-tertiary hover:text-red-400 hover:bg-red-500/5 transition-colors flex-1 text-xs"
             title="Sign out"
           >

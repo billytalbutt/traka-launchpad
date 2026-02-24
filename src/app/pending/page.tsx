@@ -1,6 +1,7 @@
 "use client";
 
-import { signOut, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
+import { resilientSignOut } from "@/lib/sign-out";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { Clock, LogOut, RefreshCw } from "lucide-react";
@@ -110,7 +111,7 @@ export default function PendingApprovalPage() {
             Check Status
           </button>
           <button
-            onClick={() => signOut({ callbackUrl: "/login" })}
+            onClick={() => resilientSignOut("/login")}
             className="flex items-center gap-2 px-4 py-2.5 rounded-lg panel-interactive text-text-secondary text-sm hover:text-red-400 transition-colors"
           >
             <LogOut className="w-3.5 h-3.5" />
